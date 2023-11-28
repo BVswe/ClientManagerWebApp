@@ -1,0 +1,287 @@
+﻿/*
+    IDEA: Use left side for filtering and maybe search, right side for plus mark to add someone, just use entire screen for each entry
+*/
+
+* {
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #191919;
+    color: white;
+}
+
+.body-container {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar {
+    background-color: #353535;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    top: 0;
+    left: 0;
+    width: 15%;
+    height: 100%;
+    padding: 10px;
+}
+
+.top-row-container {
+    margin: 0;
+    padding: 0;
+}
+
+#sidebar-header {
+    text-align: left;
+    color: white;
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    background-color: #353535;
+    padding: 0;
+    margin: 0 0 15px 0;
+}
+
+.search-container {
+    display: flex;
+}
+
+.search-bar {
+    background-color: #555555;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    box-shadow: none;
+    color: white;
+    outline: none;
+    width: 100%;
+    border-color: transparent;
+    font-size: clamp(1.5rem, 2vw, 1.75rem);
+    padding: 2px 0px;
+    margin: 0;
+}
+
+#search-submit {
+    border: none;
+    background: none;
+    color: white;
+    float: left;
+    font-size: clamp(1.5rem, 2vw, 1.75rem);
+    background: #555555;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    height: 100%;
+    cursor: pointer;
+}
+#search-submit:hover{
+    background: #505050;
+}
+#search-submit:active {
+    background: #454545;
+}
+
+#search-submit-symbol {
+    -webkit-transform: rotate(35deg);
+    -moz-transform: rotate(35deg);
+    -o-transform: rotate(35deg);
+    transform: rotate(35deg);
+    padding: 0;
+    margin: 0;
+}
+
+.search-symbol {
+    font-size: clamp(1.5rem, 2vw, 1.75rem);
+    background-color: #454545;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+    color: white;
+}
+
+.sidebar-button {
+    font-size: clamp(0.8rem, 2.5vw, 1.4rem);
+    font-weight: normal;
+    white-space: normal;
+    word-wrap: break-word;
+    min-height: 25px;
+}
+
+#results-text {
+    text-align: left;
+    color: white;
+    font-size: clamp(1.5rem, 4vw, 1.75rem);
+    padding: 0 0 0 15px;
+    margin: 10px 0 0 15%;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: 1fr;
+    gap: 15px;
+    overflow: hidden;
+    padding: 15px 15px 15px 15px;
+    margin-top: 0;
+    margin-left: 15%;
+    /* margin: 10px clamp(3px, 2vw, 10px) 0 clamp(3px, 2vw, 10px); */
+}
+
+
+.card{
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0px 0px 2px 1px rgba(131, 131, 131, 0.5);
+    background-color: #252525;
+    transition: 0.3s;
+    border-radius: 4px;
+    gap: 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    margin: 0px;
+}
+
+.card:hover {
+    box-shadow: 2px 2px 8px 2px rgba(200, 200, 200, 0.562);
+}
+
+.card-text-container {
+    display: inline-block;
+    background-color: #252525;
+    overflow-x: hidden;
+    padding: 0;
+    margin: 0;
+}
+
+.card-text {
+    margin: 0;
+    padding: 0;
+    word-wrap: break-word;
+    font-size: clamp(1.25rem, 5vw, 1.5rem);
+    font-weight: normal;
+}
+
+.card-button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-left: auto;
+    margin-right: 1%;
+}
+
+.card-button {
+    font-size: clamp(0.8rem, 2.5vw, 1.4rem);
+    font-weight: normal;
+    min-height: 25px;
+}
+
+.image {
+    height: max(5rem);
+
+    border-radius: 4px;
+    padding-left: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    background-color: #252525;
+}
+
+
+::-webkit-input-placeholder {
+    font-style: italic;
+}
+
+:-moz-placeholder {
+    font-style: italic;
+}
+
+::-moz-placeholder {
+    font-style: italic;
+}
+
+:-ms-input-placeholder {
+    font-style: italic;
+}
+
+/*TODO: In JS, just move the existing search bar to prevent input field being replicated or something weird like that happening*/
+@media (max-width: 900px) {
+    .search-bar {
+        width: clamp(5rem, 45vw, 70vw);
+        margin-left: auto;
+    }
+
+    #results-text {
+        margin-left: 0;
+    }
+
+    .top-row-container {
+        display: flex;
+        gap: 10px;
+        flex-basis: 100%;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .sidebar {
+        background-color: #353535;
+        position: sticky;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        top: 0;
+        left: 0;
+        margin: 0;
+        padding: 8px;
+        gap: 10px;
+        align-items: center;
+        width: 100%;
+        height: auto;
+    }
+
+    .sidebar-button {
+        display: inline-flex;
+        flex-wrap: wrap;
+        font-size: clamp(1.2rem, 3vw, 2rem);
+    }
+    #sidebar-header {
+        color: white;
+        font-size: clamp(1.5rem, 3vw, 2rem);
+        background-color: #353535;
+        padding: 0;
+        margin: 0;
+    }
+
+    .results-grid {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 305px) {
+    .image {
+        display: none;
+    }
+    .sidebar {
+        justify-content: center;
+        align-items: center;
+    }
+    .top-row-container {
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    #sidebar-header {
+        flex-basis: 100%;
+        text-align: center;
+    }
+    .search-container {
+        flex-basis: 100%;
+    }
+    .search-bar {
+        width: 100%;
+    }
+}
