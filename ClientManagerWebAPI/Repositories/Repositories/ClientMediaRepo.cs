@@ -1,6 +1,7 @@
 ﻿using ClientManagerWebAPI.Models;
 using ClientManagerWebAPI.Repositories.Interfaces;
 using Dapper;
+using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using Npgsql;
@@ -78,6 +79,19 @@ namespace ClientManagerWebAPI.Repositories.Repositories
                 " RETURNING *;";
             using (var connection = new NpgsqlConnection(_connectionString))
             {
+                if (media.Avatar)
+                {
+                    string checkForExistingAvatar = "SELECT Count(*) FROM client_media WHERE client_id=@ClientID AND Avatar=true";
+                    int i = 0;
+                    using (var checkExisting = new NpgsqlConnection(_connectionString))
+                    {
+                       i  = Convert.ToInt32(checkExisting.ExecuteScalarAsync<int>(checkForExistingAvatar, media));
+                    }
+                    if (i > 0)
+                    {
+                        return null;
+                    }
+                }
                 ClientMedia insertedMedia = await connection.QuerySingleOrDefaultAsync<ClientMedia>(query, media);
                 return insertedMedia;
             }
@@ -120,6 +134,7 @@ namespace ClientManagerWebAPI.Repositories.Repositories
                 try
                 {
                     await Task.Run(() => File.Delete(filePath));
+                    return "An Avatar Already Exists.";
                 }
                 catch (DirectoryNotFoundException)
                 {
@@ -128,7 +143,6 @@ namespace ClientManagerWebAPI.Repositories.Repositories
                 }
                 return "Error saving media information.";
             }
-
             return "Success";
         }
 

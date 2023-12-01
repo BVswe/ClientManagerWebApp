@@ -9,7 +9,7 @@ formEl.addEventListener('submit', event => {
   }
 const data = Object.fromEntries(formData);
 
-  fetch('api/Client', {
+    fetch('https://localhost:7082/api/Client/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

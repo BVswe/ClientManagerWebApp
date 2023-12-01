@@ -79,7 +79,7 @@ namespace ClientManagerWebAPI.Repositories.Repositories
         /// <returns></returns>
         public async Task<IEnumerable<Client>> Get50(int currentOffset)
         {
-            string query = $"SELECT clients.client_id, first_name, last_name, client_media.client_id, client_media.media_name FROM clients" +
+            string query = $"SELECT clients.client_id, first_name, last_name, phone, client_media.client_id, client_media.media_name FROM clients" +
                 $" LEFT JOIN client_media ON clients.client_id = client_media.client_id AND client_media.avatar = 'true'" +
                 $" LIMIT 50 OFFSET {currentOffset};";
             using (var connection = new NpgsqlConnection(_connectionString))
@@ -90,15 +90,22 @@ namespace ClientManagerWebAPI.Repositories.Repositories
                     return client;
                 }
                 , splitOn: "client_id");
-                
+
                 return retrievedClients;
             }
         }
 
         public async Task<IEnumerable<Client>> Search(string searchInput)
         {
-            string query = $"SELECT first_name, last_name, phone, ts_rank_cd(clients.ts, query) as \"score\"" +
-                $" FROM clients, to_tsquery('{searchInput}:*') as query WHERE ts @@ query ORDER BY score DESC;";
+            string query;
+            if (searchInput.Length == 1)
+            {
+                query = $"SELECT first_name, last_name, phone FROM clients WHERE LOWER(first_name) LIKE LOWER('{searchInput}%') ORDER BY first_name LIMIT 50";
+            }
+            else {
+                query = $"SELECT first_name, last_name, phone, ts_rank_cd(clients.ts, query) as \"score\"" +
+                    $" FROM clients, to_tsquery('english_nostop', '{searchInput}:*') as query WHERE ts @@ query ORDER BY score DESC LIMIT 50;";
+            }
             using (var connection = new NpgsqlConnection(_connectionString))
             {
                 IEnumerable<Client> retrievedClients = await connection.QueryAsync<Client>(query);

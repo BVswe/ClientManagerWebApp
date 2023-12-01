@@ -52,7 +52,7 @@ body {
     display: flex;
 }
 
-.search-bar {
+#search-bar {
     background-color: #555555;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
@@ -145,6 +145,7 @@ body {
     align-items: center;
     padding: 10px;
     margin: 0px;
+    cursor: pointer;
 }
 
 .card:hover {
@@ -159,7 +160,7 @@ body {
     margin: 0;
 }
 
-.card-text {
+.card-name, .card-phone {
     margin: 0;
     padding: 0;
     word-wrap: break-word;
@@ -175,8 +176,8 @@ body {
     margin-right: 1%;
 }
 
-.card-button {
-    font-size: clamp(0.8rem, 2.5vw, 1.4rem);
+.edit-button, .delete-button {
+    font-size: clamp(0.8rem, 3vw, 1.4rem);
     font-weight: normal;
     min-height: 25px;
 }
@@ -210,7 +211,7 @@ body {
 
 /*TODO: In JS, just move the existing search bar to prevent input field being replicated or something weird like that happening*/
 @media (max-width: 900px) {
-    .search-bar {
+    #search-bar {
         width: clamp(5rem, 45vw, 70vw);
         margin-left: auto;
     }
@@ -281,7 +282,7 @@ body {
     .search-container {
         flex-basis: 100%;
     }
-    .search-bar {
+    #search-bar {
         width: 100%;
     }
 }

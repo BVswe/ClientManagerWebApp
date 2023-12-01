@@ -18,9 +18,22 @@ namespace ClientManagerWebAPI.Controllers
         }
         // GET: api/<ClientController>
         [HttpGet]
-        public async Task<IEnumerable<Client>> Get50([FromQuery] int currentOffset)
+        public async Task<IActionResult> Get50([FromQuery] int currentOffset)
         {
-            return await _clientRepo.Get50(currentOffset);
+            IEnumerable<Client> clients =  await _clientRepo.Get50(currentOffset);
+            List<ClientSearchReturn> returnList = new List<ClientSearchReturn>();
+            foreach(Client c in clients)
+            {
+                if (c.Media != null && c.Media.Count > 0)
+                {
+                    returnList.Add(new ClientSearchReturn { ClientID = c.ClientID, FirstName = c.FirstName, LastName = c.LastName, Phone = c.Phone, mediaName = c.Media[0].MediaName });
+                }
+                else
+                {
+                    returnList.Add(new ClientSearchReturn { ClientID = c.ClientID, FirstName = c.FirstName, LastName = c.LastName, Phone = c.Phone, mediaName = "" });
+                }
+            }
+            return Ok(returnList);
         }
 
         // GET: api/<ClientController>

@@ -41,6 +41,7 @@ namespace ClientManagerWebAPI
                 await _initClientMedia();
                 await _initClientPigments();
                 await _initClientTouchups();
+                await _configureSearchDictionary();
 
                 async Task _initClientTable()
                 {
@@ -56,9 +57,9 @@ namespace ClientManagerWebAPI
                     );
                     ALTER TABLE clients ADD COLUMN IF NOT EXISTS ts TSVECTOR GENERATED ALWAYS AS
                     (
-                        setweight(to_tsvector('english', first_name), 'A') || ' ' || 
-                        setweight(to_tsvector('english', last_name), 'B') || ' ' || 
-                        setweight(to_tsvector('english', coalesce(phone, '')), 'C')
+                        setweight(to_tsvector('english_nostop', first_name), 'A') || ' ' || 
+                        setweight(to_tsvector('english_nostop', last_name), 'B') || ' ' || 
+                        setweight(to_tsvector('english_nostop', coalesce(phone, '')), 'C')
                     ) STORED;
                     CREATE INDEX IF NOT EXISTS ts_idx ON clients USING GIN (ts);";
                     await connection.ExecuteAsync(query);
@@ -98,6 +99,24 @@ namespace ClientManagerWebAPI
                     PRIMARY KEY(client_id, touchup_date),
                     CONSTRAINT fk_client_id FOREIGN KEY(client_id) REFERENCES clients(client_id) ON DELETE CASCADE
                     );";
+                    await connection.ExecuteAsync(query);
+                }
+
+                async Task _configureSearchDictionary()
+                {
+                    string query = @"DO
+                                     $$BEGIN
+                                        CREATE TEXT SEARCH DICTIONARY english_stem_nostop (
+                                            Template = snowball
+                                            , Language = english
+                                        );
+                                        CREATE TEXT SEARCH CONFIGURATION public.english_nostop ( COPY = pg_catalog.english );
+                                        ALTER TEXT SEARCH CONFIGURATION public.english_nostop
+                                           ALTER MAPPING FOR asciiword, asciihword, hword_asciipart, hword, hword_part, word WITH english_stem_nostop;
+                                     EXCEPTION
+                                        WHEN unique_violation THEN
+                                           NULL;
+                                     END;$$;";
                     await connection.ExecuteAsync(query);
                 }
             }
