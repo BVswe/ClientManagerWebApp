@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -10,7 +10,136 @@
         <link rel="stylesheet" href="index-styles.css">
     </head>
     <body>
-        <input type="button" onclick="location.href='client-search/client-search.html';" value="Client List" />
-        <input type="button" onclick="location.href='client-page/client-page.html';" value="Add a Client" />
+        <!-- Header -->
+        <div class="sidebar">
+            <div class="top-row-container">
+                <h1 id="sidebar-header">Client Manager</h1>
+                <div class="search-container">
+                    <input id="search-bar" type="text" placeholder="Search..." />
+                    <div>
+                        <button id="search-submit"><p id="search-submit-symbol">&#9906;</p></button>
+                    </div>
+                </div>
+            </div>
+            <input type="button" class="sidebar-button" value="Add a Client" />
+        </div>
+        <p id="results-text">Results</p>
+        <ul class="results-grid">
+            <!--<li class="card">
+                <img class="image" src="Untitled.jpg" />
+                <div class="card-text-container">
+                    <h3 class="card-name">John Doe</h3>
+                    <h3 class="card-phone">999-999-9999</h3>
+                </div>
+                <div class="card-button-container">
+                    <input type="button" class="edit-button" value="Edit" />
+                    <input type="button" class="delete-button" value="Delete" />
+                </div>
+                <p class="card-id" style="display:none"></p>
+            </li>
+            <li class="card">
+                <img class="image" src="Untitled.jpg" />
+                <div class="card-text-container">
+                    <h3 class="card-name">John Doe</h3>
+                    <h3 class="card-phone">999-999-9999</h3>
+                </div>
+                <div class="card-button-container">
+                    <input type="button" class="edit-button" value="Edit" />
+                    <input type="button" class="delete-button" value="Delete" />
+                </div>
+                <p class="card-id" style="display:none"></p>
+            </li>
+            <li class="card">
+                <img class="image" src="Untitled.jpg" />
+                <div class="card-text-container">
+                    <h3 class="card-name">Albert Something Einstein</h3>
+                    <h3 class="card-phone">999-999-9999</h3>
+                </div>
+                <div class="card-button-container">
+                    <input type="button" class="edit-button" value="Edit" />
+                    <input type="button" class="delete-button" value="Delete" />
+                </div>
+                <p class="card-id" style="display:none"></p>
+            </li>
+            <li class="card">
+                <img class="image" src="Untitled.jpg" />
+                <div class="card-text-container">
+                    <h3 class="card-name">Albert Something Einstein</h3>
+                    <h3 class="card-phone">999-999-9999</h3>
+                </div>
+                <div class="card-button-container">
+                    <input type="button" class="edit-button" value="Edit" />
+                    <input type="button" class="delete-button" value="Delete" />
+                </div>
+                <p class="card-id" style="display:none"></p>
+            </li>
+            <li class="card">
+                <img class="image" src="Untitled.jpg" />
+                <div class="card-text-container">
+                    <h3 class="card-name">Albert Something Einstein</h3>
+                    <h3 class="card-phone">999-999-9999</h3>
+                </div>
+                <div class="card-button-container">
+                    <input type="button" class="edit-button" value="Edit" />
+                    <input type="button" class="delete-button" value="Delete" />
+                </div>
+                <p class="card-id" style="display:none"></p>
+            </li>
+            <li class="card">
+                <img class="image" src="Untitled.jpg" />
+                <div class="card-text-container">
+                    <h3 class="card-name">Albert Something Einstein</h3>
+                    <h3 class="card-phone">999-999-9999</h3>
+                </div>
+                <div class="card-button-container">
+                    <input type="button" class="edit-button" value="Edit" />
+                    <input type="button" class="delete-button" value="Delete" />
+                </div>
+                <p class="card-id" style="display:none"></p>
+            </li>
+            <li class="card">
+                <img class="image" src="Untitled.jpg" />
+                <div class="card-text-container">
+                    <h3 class="card-name">Albert Something Einstein</h3>
+                    <h3 class="card-phone">999-999-9999</h3>
+                </div>
+                <div class="card-button-container">
+                    <input type="button" class="edit-button" value="Edit" />
+                    <input type="button" class="delete-button" value="Delete" />
+                </div>
+                <p class="card-id" style="display:none"></p>
+            </li>
+            <li class="card">
+                <img class="image" src="Untitled.jpg" />
+                <div class="card-text-container">
+                    <h3 class="card-name">Albert Something Einstein</h3>
+                    <h3 class="card-phone">999-999-9999</h3>
+                </div>
+                <div class="card-button-container">
+                    <input type="button" class="edit-button" value="Edit" />
+                    <input type="button" class="delete-button" value="Delete" />
+                </div>
+                <p class="card-id" style="display:none"></p>
+            </li>-->
+        </ul>
+
+        <template id="results-item-template">
+            <li class="card">
+                <img class="image" src="Untitled.jpg" />
+                <div class="card-text-container">
+                    <h3 class="card-name">Name</h3>
+                    <h3 class="card-phone">Phone</h3>
+                </div>
+                <div class="card-button-container">
+                    <input type="button" class="edit-button" value="Edit" />
+                    <input type="button" class="delete-button" value="Delete" />
+                </div>
+                <p class="card-id" style="display:none"></p>
+            </li>
+        </template>
     </body>
+    
+    <script type="module" src="index.js"></script>
+    <script type="module" src="modules/database-module.js"></script>
+
 </html>

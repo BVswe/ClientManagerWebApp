@@ -90,25 +90,41 @@ namespace ClientManagerWebAPI.Repositories.Repositories
                     return client;
                 }
                 , splitOn: "client_id");
-
+                if (retrievedClients.Count() == 0)
+                {
+                    return null;
+                }
                 return retrievedClients;
             }
         }
 
+        /// <summary>
+        /// Searches the database for a client using fulltext search from PostgreSQL, or by checking the first letter of the first name
+        /// </summary>
+        /// <param name="searchInput"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<Client>> Search(string searchInput)
         {
             string query;
             if (searchInput.Length == 1)
             {
-                query = $"SELECT first_name, last_name, phone FROM clients WHERE LOWER(first_name) LIKE LOWER('{searchInput}%') ORDER BY first_name LIMIT 50";
+                query = $"SELECT clients.client_id, first_name, last_name, phone, client_media.client_id, client_media.media_name" +
+                    $" FROM clients LEFT JOIN client_media ON clients.client_id = client_media.client_id AND client_media.avatar = 'true'" +
+                    $" WHERE LOWER(first_name) LIKE LOWER('{searchInput}%') ORDER BY first_name LIMIT 50";
             }
             else {
-                query = $"SELECT first_name, last_name, phone, ts_rank_cd(clients.ts, query) as \"score\"" +
-                    $" FROM clients, to_tsquery('english_nostop', '{searchInput}:*') as query WHERE ts @@ query ORDER BY score DESC LIMIT 50;";
+                query = $"SELECT clients.client_id, first_name, last_name, phone, client_media.client_id, client_media.media_name, ts_rank_cd(clients.ts, query) as \"score\"" +
+                    $" FROM clients LEFT JOIN client_media ON clients.client_id = client_media.client_id AND client_media.avatar = 'true'," +
+                    $" to_tsquery('english_nostop', '{searchInput}:*') as query WHERE ts @@ query ORDER BY score DESC LIMIT 50;";
             }
             using (var connection = new NpgsqlConnection(_connectionString))
             {
-                IEnumerable<Client> retrievedClients = await connection.QueryAsync<Client>(query);
+                IEnumerable<Client> retrievedClients = await connection.QueryAsync<Client, ClientMedia, Client>(query, (client, media) =>
+                {
+                    if (media != null) client.Media!.Add(media);
+                    return client;
+                }
+                , splitOn: "client_id");
                 if (retrievedClients.Count() == 0)
                 {
                     return null;

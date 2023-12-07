@@ -38,10 +38,23 @@ namespace ClientManagerWebAPI.Controllers
 
         // GET: api/<ClientController>
         [HttpGet("Search")]
-        public async Task<IEnumerable<Client>> SearchClients([FromQuery] string searchInput)
+        public async Task<IActionResult> SearchClients([FromQuery] string searchInput)
         {
             searchInput = searchInput.Replace(" ", "<->");
-            return await _clientRepo.Search(searchInput);
+            IEnumerable<Client> clients = await _clientRepo.Search(searchInput);
+            List<ClientSearchReturn> returnList = new List<ClientSearchReturn>();
+            foreach (Client c in clients)
+            {
+                if (c.Media != null && c.Media.Count > 0)
+                {
+                    returnList.Add(new ClientSearchReturn { ClientID = c.ClientID, FirstName = c.FirstName, LastName = c.LastName, Phone = c.Phone, mediaName = c.Media[0].MediaName });
+                }
+                else
+                {
+                    returnList.Add(new ClientSearchReturn { ClientID = c.ClientID, FirstName = c.FirstName, LastName = c.LastName, Phone = c.Phone, mediaName = "" });
+                }
+            }
+            return Ok(returnList);
         }
 
 

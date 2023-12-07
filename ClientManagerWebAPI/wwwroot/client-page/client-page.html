@@ -11,6 +11,7 @@
     </head>
     <body>
         <form id="client-form">
+            <h4>Client Information</h4>
             <input type="text" name="firstname" placeholder="First Name" />
             <input type="text" name="lastname" placeholder="Last Name" />
             <input type="date" name="date" />
@@ -20,6 +21,33 @@
             <input type="tel" name="comments" placeholder="Comments" />
             <input type="submit" />
         </form>
+        <div id="pigments-form-container">
+            <h4>Pigments</h4>
+            <form id="pigments-form">
+                <input type="text" name="pigment" placeholder="Pigment" />
+            </form>
+            <button id="pigment-add">+</button>
+            <button id="pigment-remove">-</button>
+        </div>
+        <div id="touchups-form-container">
+            <h4>Touchups</h4>
+            <form id="touchups-form">
+                <input type="date" name="touchup" placeholder="Touchup Date" />
+            </form>
+            <button id="touchup-add">+</button>
+            <button id="touchup-remove">-</button>
+        </div>
+        <div id="media-form-container">
+            <h4>Media</h4>
+            <form id="media-form">
+                <div class="media-container">
+                    <input type="file" accept="image/*, video/*" name="media" title=" " />
+                    <img class="media-image" />
+                </div>
+            </form>
+            <button id="media-add">+</button>
+            <button id="media-remove">-</button>
+        </div>
     </body>
     <script src="client-page.js"></script>
 </html>
