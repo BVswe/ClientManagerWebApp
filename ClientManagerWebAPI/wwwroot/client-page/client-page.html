@@ -19,7 +19,6 @@
             <input type="email" name="email" placeholder="Email" />
             <input type="tel" name="phone" placeholder="Phone" />
             <input type="tel" name="comments" placeholder="Comments" />
-            <input type="submit" />
         </form>
         <div id="pigments-form-container">
             <h4>Pigments</h4>
@@ -32,7 +31,7 @@
         <div id="touchups-form-container">
             <h4>Touchups</h4>
             <form id="touchups-form">
-                <input type="date" name="touchup" placeholder="Touchup Date" />
+                <input type="date" name="touchup" />
             </form>
             <button id="touchup-add">+</button>
             <button id="touchup-remove">-</button>
@@ -41,13 +40,34 @@
             <h4>Media</h4>
             <form id="media-form">
                 <div class="media-container">
-                    <input type="file" accept="image/*, video/*" name="media" title=" " />
+                    <input type="file" accept="image/*, video/*" name="media" />
                     <img class="media-image" />
                 </div>
             </form>
             <button id="media-add">+</button>
             <button id="media-remove">-</button>
         </div>
+        <button id="save">Save</button>
+        <!--<button id="testbutton">Test</button>-->
+        <template id="media-template">
+            <div class="media-container">
+                <input type="file" accept="image/*, video/*" name="media" />
+                <label>
+                    Date Taken
+                    <input type="date" name="media-date" />
+                </label>
+                <label>
+                    Before?
+                    <input type="checkbox" name="post-op" />
+                </label>
+                <label>
+                    Set as avatar?
+                    <input type="checkbox" name="avatar" />
+                </label>
+                <img class="media-image" />
+                <video class="media-video" controls></video>
+            </div>
+        </template>
     </body>
     <script src="client-page.js"></script>
 </html>
