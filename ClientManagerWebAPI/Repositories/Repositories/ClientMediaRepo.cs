@@ -82,14 +82,13 @@ namespace ClientManagerWebAPI.Repositories.Repositories
                 if (media.Avatar)
                 {
                     string checkForExistingAvatar = "SELECT Count(*) FROM client_media WHERE client_id=@ClientID AND Avatar=true";
-                    int i = 0;
                     using (var checkExisting = new NpgsqlConnection(_connectionString))
                     {
-                       i  = Convert.ToInt32(checkExisting.ExecuteScalarAsync<int>(checkForExistingAvatar, media));
-                    }
-                    if (i > 0)
-                    {
-                        return null;
+                        int i = await checkExisting.ExecuteScalarAsync<int>(checkForExistingAvatar, media);
+                        if (i != 0)
+                        {
+                            return null;
+                        }
                     }
                 }
                 ClientMedia insertedMedia = await connection.QuerySingleOrDefaultAsync<ClientMedia>(query, media);

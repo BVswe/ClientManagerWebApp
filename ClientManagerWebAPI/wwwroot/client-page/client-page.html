@@ -18,7 +18,7 @@
             <input type="text" name="address" placeholder="Address" />
             <input type="email" name="email" placeholder="Email" />
             <input type="tel" name="phone" placeholder="Phone" />
-            <input type="tel" name="comments" placeholder="Comments" />
+            <input type="text" name="comments" placeholder="Comments" />
         </form>
         <div id="pigments-form-container">
             <h4>Pigments</h4>
@@ -36,21 +36,34 @@
             <button id="touchup-add">+</button>
             <button id="touchup-remove">-</button>
         </div>
-        <div id="media-form-container">
+        <div id="media-container">
             <h4>Media</h4>
-            <form id="media-form">
-                <div class="media-container">
+            <div id="media-forms-container">
+                <form class="media-form">
                     <input type="file" accept="image/*, video/*" name="media" />
+                    <label>
+                        Date Taken
+                        <input type="date" name="media-date" />
+                    </label>
+                    <label>
+                        Before?
+                        <input type="checkbox" name="post-op" value="false" />
+                    </label>
+                    <label>
+                        Set as avatar?
+                        <input type="checkbox" name="avatar" value="false" />
+                    </label>
                     <img class="media-image" />
-                </div>
-            </form>
+                    <video class="media-video" controls></video>
+                </form>
+            </div>
             <button id="media-add">+</button>
             <button id="media-remove">-</button>
         </div>
         <button id="save">Save</button>
         <!--<button id="testbutton">Test</button>-->
         <template id="media-template">
-            <div class="media-container">
+            <form class="media-form">
                 <input type="file" accept="image/*, video/*" name="media" />
                 <label>
                     Date Taken
@@ -58,16 +71,17 @@
                 </label>
                 <label>
                     Before?
-                    <input type="checkbox" name="post-op" />
+                    <input type="checkbox" name="post-op" value="false" />
                 </label>
                 <label>
                     Set as avatar?
-                    <input type="checkbox" name="avatar" />
+                    <input type="checkbox" name="avatar" value="false" />
                 </label>
                 <img class="media-image" />
-                <video class="media-video" controls></video>
-            </div>
+                <video class="media-video" controls disablepictureinpicture></video>
+            </form>
         </template>
     </body>
-    <script src="client-page.js"></script>
+    <script type="module" src="client-page.js"></script>
+    <script type="module" src="../modules/database-module.js"></script>
 </html>

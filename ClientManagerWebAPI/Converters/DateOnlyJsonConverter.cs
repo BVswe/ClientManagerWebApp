@@ -13,7 +13,7 @@ namespace ClientManagerWebAPI.Converters
 
         public override void Write(Utf8JsonWriter writer, DateOnly value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.ToString("yyyy-M-d"));
+            writer.WriteStringValue(value.ToString("yyyy-MM-dd"));
         }
     }
 }

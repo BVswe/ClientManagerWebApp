@@ -27,14 +27,28 @@ async function loadDatabase(offset) {
 }
 
 /**
- * Fetches an image for a client from the database using given ID and mediaName
+ * Fetches all client information for one client from the datbase
+ * @param {Number} id
+ * @returns JSON
+ */
+async function getSingleClientInfo(id) {
+    const response = await fetch(`https://localhost:7082/api/Client/${id}/All`);
+    if (!response.ok) {
+        alert('Could not fetch data from server.');
+        return;
+    }
+    return response.json();
+}
+
+/**
+ * Fetches media for a client from the database using given ID and mediaName
  * @param {Number} id
  * @param {String} mediaName
- * @returns
+ * @returns Blob
  */
-async function getImageFromDB(id, mediaName) {
+async function getMediaFromDB(id, mediaName) {
     let image = await fetch(`https://localhost:7082/api/ClientMedia/${id}/${mediaName}`);
     return image.blob();
 }
 
-export { searchDatabase, loadDatabase, getImageFromDB }
+export { searchDatabase, loadDatabase, getMediaFromDB, getSingleClientInfo }

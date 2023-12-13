@@ -90,13 +90,13 @@ namespace ClientManagerWebAPI.Controllers
         private const long MaxFileSize = 10L * 1024L * 1024L * 1024L; // 10GB, adjust to your need
 
         // POST api/<ClientMediaController>
-        [HttpPost]
+        [HttpPost("{id}")]
         [DisableFormValueModelBinding]
         [RequestSizeLimit(MaxFileSize)]
         [RequestFormLimits(MultipartBodyLengthLimit = MaxFileSize)]
-        public async Task<IActionResult> Post()
+        public async Task<IActionResult> Post(int id)
         {
-            ClientMedia receivedData = new ClientMedia();
+            ClientMedia receivedData = new ClientMedia {ClientID = id, PostOp = false, Avatar = false };
 
             if (!MultipartRequestHelper.IsMultipartContentType(Request.ContentType))
                 return BadRequest("Not a multipart request");
@@ -111,21 +111,21 @@ namespace ClientManagerWebAPI.Controllers
                     return BadRequest("No content disposition in multipart defined");
                 if (!MultipartRequestHelper.HasFileContentDisposition(contentDisposition))
                 {
-                    if (contentDisposition.Name == "ClientID")
-                    {
-                        using var streamReader = new StreamReader(section.Body, Encoding.UTF8);
-                        if (int.TryParse(streamReader.ReadToEnd(), out int x))
-                        {
-                            receivedData.ClientID = x;
-                            section = await reader.ReadNextSectionAsync();
-                            continue;
-                        }
-                        else
-                        {
-                            return BadRequest("Invalid ClientID");
-                        }
-                    }
-                    if (contentDisposition.Name == "MediaDate")
+                    //if (string.Equals(contentDisposition.Name.ToString(), "ClientID", StringComparison.OrdinalIgnoreCase))
+                    //{
+                    //    using var streamReader = new StreamReader(section.Body, Encoding.UTF8);
+                    //    if (int.TryParse(streamReader.ReadToEnd(), out int x))
+                    //    {
+                    //        receivedData.ClientID = x;
+                    //        section = await reader.ReadNextSectionAsync();
+                    //        continue;
+                    //    }
+                    //    else
+                    //    {
+                    //        return BadRequest("Invalid ClientID");
+                    //    }
+                    //}
+                    if (string.Equals(contentDisposition.Name.ToString(), "MediaDate", StringComparison.OrdinalIgnoreCase))
                     {
                         using var streamReader = new StreamReader(section.Body, Encoding.UTF8);
                         if (DateOnly.TryParseExact(streamReader.ReadToEnd(), "yyyy-M-d", out DateOnly date))
@@ -139,7 +139,7 @@ namespace ClientManagerWebAPI.Controllers
                             return BadRequest("Invalid Date");
                         }
                     }
-                    if (contentDisposition.Name == "PostOp")
+                    if (string.Equals(contentDisposition.Name.ToString(), "PostOp", StringComparison.OrdinalIgnoreCase))
                     {
                         using var streamReader = new StreamReader(section.Body, Encoding.UTF8);
                         if (bool.TryParse(streamReader.ReadToEnd(), out bool x))
@@ -153,7 +153,7 @@ namespace ClientManagerWebAPI.Controllers
                             return BadRequest("Invalid PostOp");
                         }
                     }
-                    if (contentDisposition.Name == "Avatar")
+                    if (string.Equals(contentDisposition.Name.ToString(), "Avatar", StringComparison.OrdinalIgnoreCase))
                     {
                         using var streamReader = new StreamReader(section.Body, Encoding.UTF8);
                         if (bool.TryParse(streamReader.ReadToEnd(), out bool x))
@@ -165,6 +165,7 @@ namespace ClientManagerWebAPI.Controllers
                         else
                         {
                             receivedData.Avatar = false;
+                            continue;
                         }
                     }
                     return BadRequest("Incorrect information sent from client");

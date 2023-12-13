@@ -1,4 +1,4 @@
-import { searchDatabase, loadDatabase, getImageFromDB } from './Modules/database-module.js';
+import { searchDatabase, loadDatabase, getMediaFromDB } from './Modules/database-module.js';
 
 document.querySelector('#search-submit').addEventListener('click', searchSubmitClicked);
 
@@ -35,7 +35,7 @@ function resultClicked(e) {
         alert('Error: Cannot retrieve client data.');
         return;
     }
-    window.location.assign(`client-page/client-page.html#${cardIDItem.innerText}`);
+    window.location.assign(`client-page/client-page.html?id=${cardIDItem.innerText}&edit=false`);
 }
 
 /**
@@ -94,7 +94,7 @@ async function addCardToResults(data) {
     let image = '';
     let imageUrl = '';
     if (data.mediaName) {
-        image = await getImageFromDB(data.clientID, data.mediaName);
+        image = await getMediaFromDB(data.clientID, data.mediaName);
         imageUrl = URL.createObjectURL(image);
         console.log(clone.querySelector('.image'));
         console.log(imageUrl);
@@ -102,7 +102,7 @@ async function addCardToResults(data) {
     }
     clone.querySelector('.edit-button').addEventListener('click', function (e) {
         e.stopPropagation();
-        console.log('Edit Button');
+        window.location.assign(`client-page/client-page.html?id=${cardIDItem.innerText}&edit=false`);
     });
     clone.querySelector('.delete-button').addEventListener('click', function (e) {
         e.stopPropagation();
