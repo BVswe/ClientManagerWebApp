@@ -1,3 +1,6 @@
+//TODO: Delete button for each specific pigment/touchup/media
+//TODO: Replace placeholders with labels, use placeholders for example inputs
+
 import { getSingleClientInfo, getMediaFromDB } from '../Modules/database-module.js';
 
 document.querySelector('#pigment-add').addEventListener('click', addPigment);
@@ -10,6 +13,7 @@ document.querySelector('[name="media"]').onchange = previewImage;
 document.querySelector('[name="avatar"]').onclick = changeCheckboxValue;
 document.querySelector('[name="post-op"]').onclick = changeCheckboxValue;
 document.querySelector('#save').addEventListener('click', saveAll);
+document.querySelector('.media-delete-button').onclick = removeMediaButton;
 document.addEventListener("DOMContentLoaded", loadClient);
 //document.querySelector('#testbutton').addEventListener('click', test);
 
@@ -119,7 +123,7 @@ async function loadClient() {
         editButton.style.position = "absolute";
         editButton.style.right = 0;
         editButton.style.bottom = 0;
-        editButton.style.margin = "15px";
+        editButton.style.margin = "40px";
         editButton.style.fontSize = "1.25rem";
         editButton.textContent = "Edit";
         editButton.zIndex = 5;
@@ -141,24 +145,6 @@ function changeCheckboxValue(e) {
     else if (e.target.value == "false") {
         e.target.value = "true";
     }
-}
-
-async function saveClient(e) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    if (formData.get('date') == "") {
-        alert("Please fill in date.");
-        return;
-    }
-    const data = Object.fromEntries(formData);
-    const response = await fetch('https://localhost:7082/api/Client/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    });
-    return response.json();
 }
     
 function addPigment() {
@@ -191,6 +177,7 @@ function removeTouchup() {
 }
 
 function previewImage(e) {
+    addMedia();
     const container = e.target.closest('form');
     const mediaImage = container.querySelector('.media-image')
     const mediaVideo = container.querySelector('.media-video')
@@ -242,7 +229,12 @@ function addMedia() {
     clone.querySelector('[name="media"]').onchange = previewImage;
     clone.querySelector('[name="avatar"]').onclick = changeCheckboxValue;
     clone.querySelector('[name="post-op"]').onclick = changeCheckboxValue;
+    clone.querySelector('.media-delete-button').onclick = removeMediaButton;
     mediaForm.appendChild(clone);
+}
+
+function removeMediaButton(e) {
+    e.target.closest('form').remove();
 }
 
 function removeMedia() {
@@ -304,6 +296,9 @@ async function saveAll() {
     let touchupArray = [];
     let mediaArray = [];
     for (pigment of pigments) {
+        if (!pigment) {
+            continue;
+        }
         pigmentArray.push(
             await fetch(`https://localhost:7082/api/ClientPigment/${clientID}`, {
             method: 'POST',
@@ -315,6 +310,9 @@ async function saveAll() {
         );
     }
     for (touchup of touchups) {
+        if (!touchup) {
+            continue;
+        }
         touchupArray.push(
             await fetch(`https://localhost:7082/api/ClientTouchup/${clientID}`, {
             method: 'POST',
