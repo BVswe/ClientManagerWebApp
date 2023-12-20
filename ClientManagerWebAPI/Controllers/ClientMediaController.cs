@@ -12,6 +12,7 @@ using ClientManagerWebAPI.Models;
 using Microsoft.Extensions.ObjectPool;
 using static System.Collections.Specialized.BitVector32;
 using System;
+using static System.Net.Mime.MediaTypeNames;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -96,7 +97,7 @@ namespace ClientManagerWebAPI.Controllers
         [RequestFormLimits(MultipartBodyLengthLimit = MaxFileSize)]
         public async Task<IActionResult> Post(int id)
         {
-            ClientMedia receivedData = new ClientMedia {ClientID = id, PostOp = false, Avatar = false };
+            ClientMedia receivedData = new ClientMedia {ClientID = id, Before = false, Avatar = false };
 
             if (!MultipartRequestHelper.IsMultipartContentType(Request.ContentType))
                 return BadRequest("Not a multipart request");
@@ -111,20 +112,6 @@ namespace ClientManagerWebAPI.Controllers
                     return BadRequest("No content disposition in multipart defined");
                 if (!MultipartRequestHelper.HasFileContentDisposition(contentDisposition))
                 {
-                    //if (string.Equals(contentDisposition.Name.ToString(), "ClientID", StringComparison.OrdinalIgnoreCase))
-                    //{
-                    //    using var streamReader = new StreamReader(section.Body, Encoding.UTF8);
-                    //    if (int.TryParse(streamReader.ReadToEnd(), out int x))
-                    //    {
-                    //        receivedData.ClientID = x;
-                    //        section = await reader.ReadNextSectionAsync();
-                    //        continue;
-                    //    }
-                    //    else
-                    //    {
-                    //        return BadRequest("Invalid ClientID");
-                    //    }
-                    //}
                     if (string.Equals(contentDisposition.Name.ToString(), "MediaDate", StringComparison.OrdinalIgnoreCase))
                     {
                         using var streamReader = new StreamReader(section.Body, Encoding.UTF8);
@@ -139,18 +126,18 @@ namespace ClientManagerWebAPI.Controllers
                             return BadRequest("Invalid Date");
                         }
                     }
-                    if (string.Equals(contentDisposition.Name.ToString(), "PostOp", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(contentDisposition.Name.ToString(), "Before", StringComparison.OrdinalIgnoreCase))
                     {
                         using var streamReader = new StreamReader(section.Body, Encoding.UTF8);
                         if (bool.TryParse(streamReader.ReadToEnd(), out bool x))
                         {
-                            receivedData.PostOp = x;
+                            receivedData.Before = x;
                             section = await reader.ReadNextSectionAsync();
                             continue;
                         }
                         else
                         {
-                            return BadRequest("Invalid PostOp");
+                            return BadRequest("Invalid \"Before\" field");
                         }
                     }
                     if (string.Equals(contentDisposition.Name.ToString(), "Avatar", StringComparison.OrdinalIgnoreCase))
@@ -190,7 +177,7 @@ namespace ClientManagerWebAPI.Controllers
 
         // PUT api/<ClientMediaController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromRoute] int id, [Bind(include: "postop, mediadate, medianame, avatar")] ClientMedia media)
+        public async Task<IActionResult> Put([FromRoute] int id, [Bind(include: "before, mediadate, medianame, avatar")] ClientMedia media)
         {
             media.ClientID = id;
             try
@@ -212,13 +199,9 @@ namespace ClientManagerWebAPI.Controllers
         [HttpDelete("{id}/{fileName}")]
         public async Task<IActionResult> Delete(int id, string fileName)
         {
-            fileName.Replace("/", "");
-            var filePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            filePath = Path.Combine(filePath, id.ToString());
             var ext = Path.GetExtension(fileName).ToLowerInvariant();
             string processedFileName = Path.GetFileNameWithoutExtension(string.Join("", fileName.Split(Path.GetInvalidFileNameChars())).Replace(" ", "_")).Replace(".", "") + ext;
-            filePath = Path.Combine(filePath, processedFileName);
-            ClientMedia receivedMedia = new ClientMedia() { ClientID = id,  MediaName = filePath};
+            ClientMedia receivedMedia = new ClientMedia() { ClientID = id,  MediaName = processedFileName };
             ClientMedia result = await _clientMediaRepo.DeleteClientMedia(receivedMedia);
             if (result == null)
             {

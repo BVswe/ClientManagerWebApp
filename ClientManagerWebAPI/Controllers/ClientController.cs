@@ -70,6 +70,8 @@ namespace ClientManagerWebAPI.Controllers
                 {
                     return StatusCode(422);
                 }
+                c1.Pigments = c1.Pigments.OrderBy(x => x.Pigment).ThenBy((x) => x.Pigment.Length).ToList();
+                c1.Touchups = c1.Touchups.OrderBy(x => x.TouchupDate).ToList();
                 return Ok(c1);
             }
             catch (Npgsql.PostgresException)

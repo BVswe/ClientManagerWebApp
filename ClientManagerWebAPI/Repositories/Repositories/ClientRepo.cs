@@ -142,7 +142,7 @@ namespace ClientManagerWebAPI.Repositories.Repositories
         public async Task<Client> GetAllInfoSingle(int id)
         {
             string query = "SELECT clients.client_id, first_name, last_name, date, phone, address, email, comments," +
-                " client_media.client_id, client_media.media_name, client_media.media_date, client_media.postop, client_media.avatar," +
+                " client_media.client_id, client_media.media_name, client_media.media_date, client_media.before, client_media.avatar," +
                 " client_pigments.client_id, client_pigments.pigment," +
                 " client_touchups.client_id, client_touchups.touchup_date" +
                 " FROM clients" +

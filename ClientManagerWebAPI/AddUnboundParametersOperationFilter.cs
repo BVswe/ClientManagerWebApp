@@ -23,7 +23,7 @@ namespace ClientManagerWebAPI
                         {
                             { "ClientID" , new OpenApiSchema() { Type = "string", Format = "string" } },
                             { "MediaDate" , new OpenApiSchema() { Type = "string", Format = "string" } },
-                            { "PostOp" , new OpenApiSchema() { Type = "string", Format = "string" } },
+                            { "Before" , new OpenApiSchema() { Type = "string", Format = "string" } },
                             { "Avatar" , new OpenApiSchema() { Type = "string", Format = "string" } },
                             { "file" , new OpenApiSchema() { Type = "string", Format = "binary" } },
                         }

@@ -20,6 +20,11 @@ namespace ClientManagerWebAPI.Repositories.Repositories
         }
         public async Task<ClientMedia> DeleteClientMedia(ClientMedia media)
         {
+            var filePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            filePath = Path.Combine(filePath, media.ClientID.ToString());
+            var ext = Path.GetExtension(media.MediaName).ToLowerInvariant();
+            string processedFileName = Path.GetFileNameWithoutExtension(string.Join("", media.MediaName.Split(Path.GetInvalidFileNameChars())).Replace(" ", "_")).Replace(".", "") + ext;
+            filePath = Path.Combine(filePath, processedFileName);
             string query = "DELETE FROM client_media WHERE client_id=@ClientID AND media_name=@MediaName" +
                 " RETURNING *;";
             ClientMedia deletedClient;
@@ -48,7 +53,7 @@ namespace ClientManagerWebAPI.Repositories.Repositories
 
         public async Task<IEnumerable<ClientMedia>> GetAllMedia(int id)
         {
-            string query = "SELECT client_id, media_name, media_date, postop, avatar" +
+            string query = "SELECT client_id, media_name, media_date, before, avatar" +
                 " FROM client_media WHERE client_id=@ClientID";
             IEnumerable<ClientMedia> retrievedMedia;
             using (var connection = new NpgsqlConnection(_connectionString))
@@ -74,8 +79,8 @@ namespace ClientManagerWebAPI.Repositories.Repositories
 
         public async Task<ClientMedia> InsertToDB(ClientMedia media)
         {
-            string query = "INSERT INTO client_media (client_id, media_name, media_date, postop, avatar)" +
-                " VALUES (@ClientID, @MediaName, @MediaDate, @PostOp, @Avatar)" +
+            string query = "INSERT INTO client_media (client_id, media_name, media_date, before, avatar)" +
+                " VALUES (@ClientID, @MediaName, @MediaDate, @Before, @Avatar)" +
                 " RETURNING *;";
             using (var connection = new NpgsqlConnection(_connectionString))
             {
@@ -147,8 +152,8 @@ namespace ClientManagerWebAPI.Repositories.Repositories
 
         public async Task<ClientMedia> UpdateClientMedia(ClientMedia media)
         {
-            string query = "UPDATE client_media SET media_date = @MediaDate, postop = @PostOp, avatar = @Avatar" +
-                " WHERE client_id = @ClientID AND media_name = @MediaName, " +
+            string query = "UPDATE client_media SET media_date = @MediaDate, before = @Before, avatar = @Avatar" +
+                " WHERE client_id = @ClientID AND media_name = @MediaName" +
                 " RETURNING *;";
             using (var connection = new NpgsqlConnection(_connectionString))
             {

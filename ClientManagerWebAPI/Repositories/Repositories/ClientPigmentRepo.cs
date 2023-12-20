@@ -37,7 +37,7 @@ namespace ClientManagerWebAPI.Repositories.Repositories
         /// <exception cref="NotImplementedException"></exception>
         public async Task<IEnumerable<ClientPigment>> GetAllPigments(int id)
         {
-            string query = "SELECT client_id, pigment FROM client_pigments WHERE client_id=@ClientID";
+            string query = "SELECT client_id, pigment FROM client_pigments WHERE client_id=@ClientID ORDER BY pigment";
             using (var connection = new NpgsqlConnection(_connectionString))
             {
                 return await connection.QueryAsync<ClientPigment>(query, new {ClientID=id} );

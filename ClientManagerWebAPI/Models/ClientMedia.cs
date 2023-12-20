@@ -9,7 +9,7 @@ namespace ClientManagerWebAPI.Models
         [JsonIgnore]
         public int ClientID { get; set; }
         [Required]
-        public bool PostOp { get; set; }
+        public bool Before { get; set; }
         [Required, JsonConverter(typeof(DateOnlyJsonConverter))]
         public DateOnly MediaDate { get; set; }
         [Required]

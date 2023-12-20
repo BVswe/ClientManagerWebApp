@@ -36,7 +36,7 @@ namespace ClientManagerWebAPI.Repositories.Repositories
         /// <returns>Task of type IEnumerable ClientTouchup</returns>
         public async Task<IEnumerable<ClientTouchup>> GetAllClientTouchups(int id)
         {
-            string query = "SELECT client_id, touchup_date FROM client_touchups WHERE client_id=@id;";
+            string query = "SELECT client_id, touchup_date FROM client_touchups WHERE client_id=@id ORDER BY touchup_date;";
             using (var connection = new NpgsqlConnection(_connectionString))
             {
                 return await connection.QueryAsync<ClientTouchup>(query, new { id=id });
