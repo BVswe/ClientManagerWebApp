@@ -1,6 +1,3 @@
-//TODO: Arrange media by date when viewing with no fields, then toggle fields on when viewing
-//TODO: Replace placeholders with labels, use placeholders for example inputs
-
 import { getSingleClientInfo, getMediaFromDB } from '../Modules/database-module.js';
 
 document.querySelector('#pigment-add').addEventListener('click', addPigment);
@@ -9,13 +6,8 @@ document.querySelector('#touchup-add').addEventListener('click', addTouchup);
 document.querySelector('#touchup-remove').addEventListener('click', removeTouchup);
 document.querySelector('#media-add').addEventListener('click', addMedia);
 document.querySelector('#media-remove').addEventListener('click', removeMedia);
-document.querySelector('[name="media"]').onchange = previewImage;
-document.querySelector('[name="avatar"]').onclick = changeCheckboxValueAvatar;
-document.querySelector('[name="before"]').onclick = changeCheckboxValueBefore;
+document.querySelector('#fullscreen-image-container').addEventListener('click', fullscreenImageMinimize);
 document.querySelector('#save').onclick = saveAll;
-document.querySelector('.specific-media-delete').onclick = removeMediaButton;
-document.querySelector('.specific-pigment-delete').onclick = removeClosestLabel;
-document.querySelector('.specific-touchup-delete').onclick = removeClosestLabel;
 document.addEventListener("DOMContentLoaded", loadClient);
 let origData = {};
 
@@ -49,9 +41,7 @@ async function loadClient() {
         let pigments = response["pigments"];
         origData.pigments = [];
         for (let i = 0; i < pigments.length; i++) {
-            if (i != 0) {
-                addPigment();
-            }
+            addPigment();
             let label = pigmentForm.lastElementChild;
             label.querySelector('[name="pigment"]').value = pigments[i].pigment;
             origData.pigments.push(pigments[i].pigment);
@@ -62,23 +52,26 @@ async function loadClient() {
         let touchups = response["touchups"];
         origData.touchups = [];
         for (let i = 0; i < touchups.length; i++) {
-            if (i != 0) {
-                addTouchup();
-            }
+            addTouchup();
             let label = touchupsForm.lastElementChild;
             label.querySelector('[name="touchup"]').value = touchups[i].touchupDate;
             origData.touchups.push(touchups[i].touchupDate);
         }
 
         //Set media data, adding media if needed
-        let mediaForms = document.querySelector('#media-forms-container');
         let media = response["media"];
         origData.media = [];
         for (let i = 0; i < media.length; i++) {
-            if (i != 0) {
-                addMedia();
+            let currentForm;
+            if (media[i].before == true) {
+                addBeforeSection();
+                currentForm = addMediaInBeforeSection().lastElementChild;
             }
-            let currentForm = mediaForms.lastElementChild;
+            else {
+                addNewMediaSection(media[i].mediaDate);
+                currentForm = addMediaInSection(media[i].mediaDate).lastElementChild;
+            }
+
             currentForm.querySelector('[name="media-date"]').value = media[i].mediaDate;
             if (media[i].before == true) {
                 currentForm.querySelector('[name="before"]').value = true;
@@ -108,47 +101,69 @@ async function loadClient() {
                 currentForm.querySelector('.media-image').style.display = "inline";
                 currentForm.querySelector('.media-video').style.display = "none";
             }
-            
+
             origData.media.push({
                 blobUrl: currentForm.querySelector('.media-video').src ? currentForm.querySelector('.media-video').src = mediaUrl : currentForm.querySelector('.media-image').src,
                 mediaName: media[i].mediaName,
                 mediaDate: media[i].mediaDate,
-                before: currentForm.querySelector('[name="before"]').checked ? true: false,
+                before: currentForm.querySelector('[name="before"]').checked ? true : false,
                 avatar: currentForm.querySelector('[name="avatar"]').checked ? true : false,
             });
         }
         console.log("Original Data:");
         console.log(origData);
     }
+    else {
+        let elements = document.querySelectorAll('.invisible-when-viewing');
+        let mediaLabels = document.querySelectorAll('.media-label');
+        for (let element of elements) {
+            element.style.display = "inline";
+        }
+        for (let label of mediaLabels) {
+            label.style.display = "flex";
+        }
+        addPigment();
+        addTouchup();
+        addMedia();
+    }
+
     const edit = urlParams.get('edit') ? urlParams.get('edit') : false;
+    let arr = window.location.href.split('?');
     if (edit == "true") {
         document.querySelector('#save').onclick = updateAll;
+        let elements = document.querySelectorAll('.invisible-when-viewing');
+        let mediaLabels = document.querySelectorAll('.media-label');
+        for (let element of elements) {
+            element.style.display = "inline";
+        }
+        for (let label of mediaLabels) {
+            label.style.display = "flex";
+        }
     }
-    else {
-        let blockingLayer = document.createElement('div');
-        blockingLayer.id = "blocking-layer";
-        blockingLayer.style.position = "fixed";
-        blockingLayer.style.padding = 0;
-        blockingLayer.style.margin = 0;
-        blockingLayer.style.top = 0;
-        blockingLayer.style.left = 0;
-        blockingLayer.style.width = "100%";
-        blockingLayer.style.height = "100%";
-        blockingLayer.style.background = "transparent";
-        blockingLayer.style.zIndex = 2;
-
+    else if (arr.length > 1 && arr[1] !== '') {
         let editButton = document.createElement('button');
-        editButton.style.position = "absolute";
-        editButton.style.right = 0;
-        editButton.style.bottom = 0;
-        editButton.style.margin = "40px";
-        editButton.style.fontSize = "1.25rem";
+        editButton.className = "edit-button";
+        editButton.style.position = "relative";
         editButton.textContent = "Edit";
-        editButton.zIndex = 5;
+        editButton.style.padding = "5px";
+        editButton.zIndex = 6;
         editButton.onclick = editClicked;
-
-        blockingLayer.appendChild(editButton);
-        document.body.appendChild(blockingLayer);
+        let topbar = document.querySelector('#page-header');
+        topbar.appendChild(editButton);
+        let inputs = document.querySelectorAll('input');
+        for (let input of inputs) {
+            input.readOnly = true;
+        }
+    }
+    let sections = document.querySelectorAll('.media-date-section');
+    if (sections && sections.length > 0) {
+        for (let i = 0; i < sections.length; i++) {
+            if (sections[i].querySelector('.media-date-section-header').textContent == 'Before') {
+                continue;
+            }
+            let dateString = sections[i].querySelector('.media-date-section-header').textContent.split('-');
+            sections[i].querySelector('.media-date-section-header').textContent = `${dateString[1]}-${dateString[2]}-${dateString[0]}`;
+        }
     }
 }
 
@@ -156,8 +171,20 @@ function editClicked() {
     const url = new URL(window.location.href);
     url.searchParams.set("edit", "true")
     window.history.pushState({} , '', url);
-    document.querySelector("#blocking-layer").remove();
     document.querySelector('#save').onclick = updateAll;
+    let inputs = document.querySelectorAll('input');
+    for (let input of inputs) {
+        input.readOnly = false;
+    }
+    let elements = document.querySelectorAll('.invisible-when-viewing');
+    let mediaLabels = document.querySelectorAll('.media-label');
+    for (let element of elements) {
+        element.style.display = "inline";
+    }
+    for (let label of mediaLabels) {
+        label.style.display = "flex";
+    }
+    document.querySelector(".edit-button").remove();
 }
 
 function changeCheckboxValueAvatar(e) {
@@ -185,8 +212,9 @@ function changeCheckboxValueBefore(e) {
 }
     
 function addPigment() {
+
     let newLabel = document.createElement('label');
-    newLabel.className = "pigment-label";
+    newLabel.className = "input-label";
     newLabel.textContent = "Pigment: ";
 
     let newPigment = document.createElement('input');
@@ -195,12 +223,23 @@ function addPigment() {
     newPigment.setAttribute('placeholder', 'Pigment');
     
     let newButton = document.createElement('button');
-    newButton.className = "specific-pigment-delete";
+    newButton.className = "specific-pigment-delete invisible-when-viewing";
     newButton.onclick = removeClosestLabel;
     newButton.textContent = 'X';
 
-    newLabel.appendChild(newPigment);
-    newLabel.appendChild(newButton);
+    let newDiv = document.createElement('div');
+    newDiv.className = "text-button-container";
+
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const edit = urlParams.get('edit') ? urlParams.get('edit') : false;
+    if (edit == 'true') {
+        newButton.style.display = "inline";
+    }
+
+    newDiv.appendChild(newPigment);
+    newDiv.appendChild(newButton);
+    newLabel.appendChild(newDiv);
     document.querySelector('#pigments-form').appendChild(newLabel);
 }
 
@@ -213,20 +252,31 @@ function removePigment() {
 
 function addTouchup() {
     let newLabel = document.createElement('label');
-    newLabel.className = "touchup-label";
+    newLabel.className = "input-label";
     newLabel.textContent = "Touchup Date: ";
 
     let newTouchup = document.createElement('input');
+    newTouchup.className = 'date-input'
     newTouchup.setAttribute('type', 'date');
     newTouchup.setAttribute('name', 'touchup');
 
     let newButton = document.createElement('button');
-    newButton.className = "specific-touchup-delete";
+    newButton.className = "specific-touchup-delete invisible-when-viewing";
     newButton.onclick = removeClosestLabel;
     newButton.textContent = 'X';
 
-    newLabel.appendChild(newTouchup);
-    newLabel.appendChild(newButton);
+    const urlParams = new URLSearchParams(window.location.search);
+    const edit = urlParams.get('edit') ? urlParams.get('edit') : false;
+    if (edit == 'true') {
+        newButton.style.display = "inline";
+    }
+
+    let newDiv = document.createElement('div');
+    newDiv.className = "text-button-container";
+
+    newDiv.appendChild(newTouchup);
+    newDiv.appendChild(newButton);
+    newLabel.appendChild(newDiv);
     document.querySelector('#touchups-form').appendChild(newLabel);
 }
 
@@ -242,7 +292,6 @@ function removeClosestLabel(e) {
 }
 
 function previewImage(e) {
-    addMedia();
     const container = e.target.closest('form');
     const mediaImage = container.querySelector('.media-image')
     const mediaVideo = container.querySelector('.media-video')
@@ -250,7 +299,7 @@ function previewImage(e) {
     if (file) {
         if (isVideo(file.name)) {
             mediaImage.style.display = "none";
-            mediaVideo.style.display = "inline"
+            mediaVideo.style.display = "inline";
             container.querySelector('[name="avatar"]').style.display = "none";
             mediaVideo.src = URL.createObjectURL(file);
         }
@@ -273,6 +322,14 @@ function previewImage(e) {
             mediaVideo.style.display = "none";
         }
     }
+    let invisElements = container.querySelectorAll('.invisible-when-viewing');
+    let mediaLabels = container.querySelectorAll('.media-label');
+    for (let i = 0; i < invisElements.length; i++) {
+        invisElements[i].style.display = 'inline';
+    }
+    for (let label of mediaLabels) {
+        label.style.display = 'flex';
+    }
 }
 
 function isVideo(filename) {
@@ -289,6 +346,21 @@ function isVideo(filename) {
     return false;
 }
 
+function imageClicked(e) {
+    let image = e.target;
+    let fullscreenImage = document.querySelector('#fullscreen-image');
+    let fullscreenImageContainer = document.querySelector('#fullscreen-image-container');
+    fullscreenImageContainer.style.display = "grid";
+
+    fullscreenImage.src = image.src;
+}
+
+function fullscreenImageMinimize(e) {
+    let fullscreenImageContainer = document.querySelector('#fullscreen-image-container');
+    fullscreenImageContainer.style.display = 'none';
+
+}
+
 function addMedia() {
     const mediaForm = document.querySelector('#media-forms-container');
     const template = document.querySelector('#media-template');
@@ -297,7 +369,126 @@ function addMedia() {
     clone.querySelector('[name="avatar"]').onclick = changeCheckboxValueAvatar;
     clone.querySelector('[name="before"]').onclick = changeCheckboxValueBefore;
     clone.querySelector('.specific-media-delete').onclick = removeMediaButton;
+    clone.querySelector('.media-image').onclick = imageClicked;
     mediaForm.appendChild(clone);
+}
+
+function addMediaInSection(date) {
+    const mediaForm = document.querySelector('#media-forms-container');
+    let sections = mediaForm.querySelectorAll('.media-date-section');
+    let correctSection;
+    if (sections && sections.length > 0) {
+        for (let i = 0; i < sections.length; i++) {
+            if (sections[i].querySelector('.media-date-section-header').textContent == date) {
+                correctSection = sections[i];
+                break;
+            }
+        }
+    }
+    const template = document.querySelector('#media-template');
+    let clone = template.content.cloneNode(true);
+    clone.querySelector('[name="media"]').onchange = previewImage;
+    clone.querySelector('[name="avatar"]').onclick = changeCheckboxValueAvatar;
+    clone.querySelector('[name="before"]').onclick = changeCheckboxValueBefore;
+    clone.querySelector('.specific-media-delete').onclick = removeMediaButton;
+    clone.querySelector('.media-image').onclick = imageClicked;
+    console.log(correctSection);
+    if (correctSection) {
+        let container = correctSection.querySelector('.media-date-item-container');
+        container.appendChild(clone);
+        return (container);
+    }
+    else {
+        mediaForm.appendChild(clone);
+        return mediaForm;
+    }
+}
+
+function addNewMediaSection(date) {
+    const mediaForm = document.querySelector('#media-forms-container');
+    let sections = mediaForm.querySelectorAll('.media-date-section');
+    if (sections && sections.length > 0) {
+        for (let i = 0; i < sections.length; i++) {
+            if (sections[i].querySelector('.media-date-section-header').textContent == date) {
+                return;
+            }
+        }
+    }
+    let newSection = document.createElement('section');
+    newSection.className = 'media-date-section';
+    let newH4 = document.createElement('h4');
+    newH4.textContent = date;
+    newH4.className = 'media-date-section-header';
+    newSection.appendChild(newH4);
+    let newContainerDiv = document.createElement('div');
+    newContainerDiv.className = 'media-date-item-container';
+    newSection.appendChild(newContainerDiv);
+    if (sections && sections.length > 0) {
+        for (let i = 0; i < sections.length; i++) {
+            let sectionDate = sections[i].querySelector('.media-date-section-header').textContent;
+            if (sectionDate != 'Before' && sectionDate > date) {
+                mediaForm.insertBefore(newSection, sections[i]);
+                return;
+            }
+        }
+        mediaForm.appendChild(newSection);
+    }
+    else {
+        mediaForm.appendChild(newSection);
+    }
+}
+
+function addBeforeSection() {
+    const mediaForm = document.querySelector('#media-forms-container');
+    let sections = mediaForm.querySelectorAll('.media-date-section');
+    if (sections && sections.length > 0) {
+        for (let i = 0; i < sections.length; i++) {
+            if (sections[i].querySelector('.media-date-section-header').textContent == 'Before') {
+                return;
+            }
+        }
+    }
+    let newSection = document.createElement('section');
+    newSection.className = 'media-date-section';
+    let newH4 = document.createElement('h4');
+    newH4.textContent = 'Before';
+    newH4.className = 'media-date-section-header';
+    newSection.appendChild(newH4);
+    let newContainerDiv = document.createElement('div');
+    newContainerDiv.className = 'media-date-item-container';
+    newSection.appendChild(newContainerDiv);
+    mediaForm.insertBefore(newSection, mediaForm.firstChild);
+}
+
+function addMediaInBeforeSection() {
+    const mediaForm = document.querySelector('#media-forms-container');
+    let sections = mediaForm.querySelectorAll('.media-date-section');
+    let correctSection;
+    if (sections && sections.length > 0) {
+        for (let i = 0; i < sections.length; i++) {
+            if (sections[i].querySelector('.media-date-section-header').textContent == 'Before') {
+                correctSection = sections[i];
+                break;
+            }
+        }
+    }
+    const template = document.querySelector('#media-template');
+    let clone = template.content.cloneNode(true);
+    clone.querySelector('[name="media"]').onchange = previewImage;
+    clone.querySelector('[name="avatar"]').onclick = changeCheckboxValueAvatar;
+    clone.querySelector('[name="before"]').onclick = changeCheckboxValueBefore;
+    clone.querySelector('.specific-media-delete').onclick = removeMediaButton;
+    clone.querySelector('.media-image').onclick = imageClicked;
+    console.log(correctSection);
+    if (correctSection) {
+        let container = correctSection.querySelector('.media-date-item-container');
+        container.appendChild(clone);
+        return (container);
+    }
+    else {
+        mediaForm.appendChild(clone);
+        return mediaForm;
+    }
 }
 
 function removeMediaButton(e) {
@@ -325,6 +516,7 @@ function removeMedia() {
         mediaFormsContainer.removeChild(mediaForm);
     }
 }
+
 
 async function saveAll() {
     const clientForm = new FormData(document.querySelector('#client-form'));
@@ -364,36 +556,29 @@ async function saveAll() {
         .then(response => response.json())
         .then(json => clientID = JSON.stringify(json.clientID));
     console.log(clientID);
-    let pigmentArray = [];
-    let touchupArray = [];
-    let mediaArray = [];
     for (let pigment of pigments) {
         if (!pigment) {
             continue;
         }
-        pigmentArray.push(
-            await fetch(`https://localhost:7082/api/ClientPigment/${clientID}`, {
+        await fetch(`https://localhost:7082/api/ClientPigment/${clientID}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ pigment: pigment })
-            })
-        );
+        })
     }
     for (let touchup of touchups) {
         if (!touchup) {
             continue;
         }
-        touchupArray.push(
-            await fetch(`https://localhost:7082/api/ClientTouchup/${clientID}`, {
+        await fetch(`https://localhost:7082/api/ClientTouchup/${clientID}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ TouchupDate: touchup })
-            })
-        );
+        })
     }
     for (let mediaData of mediaForm) {
         let singleMediaForm = new FormData(mediaData);
@@ -418,14 +603,14 @@ async function saveAll() {
             submitMediaForm.append("Avatar", singleMediaForm.get("avatar"));
         }
         submitMediaForm.append("media", singleMediaForm.get("media"));
-        mediaArray.push(
-            await fetch(`https://localhost:7082/api/ClientMedia/${clientID}`, {
-                method: 'POST',
-                body: submitMediaForm
-            })
-        );
+        await fetch(`https://localhost:7082/api/ClientMedia/${clientID}`, {
+            method: 'POST',
+            body: submitMediaForm
+        })
     }
-    alert('Client Submitted.')
+    alert('Client Saved.')
+    let url = window.location.href;
+    window.location.assign(`${url}?id=${clientID}&edit=false`);
 }
 
 async function updateAll() {
@@ -488,7 +673,11 @@ async function updateAll() {
     await updateDbFromArray(pigments, clientID, "pigment");
     await updateDbFromArray(touchups, clientID, "touchup");
     await updateDbMedia(mediaForm, clientID);
-    location.reload();
+    window.scrollTo(0, 0);
+    
+    let url = window.location.href;
+    url = url.replace('true', 'false');
+    window.location.replace(url);
 }
 
 async function updateDbFromArray(newValues, cid, type) {

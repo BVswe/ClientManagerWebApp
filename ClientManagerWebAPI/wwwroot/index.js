@@ -6,6 +6,15 @@ document.querySelector('.results-grid').addEventListener('click', resultClicked)
 
 document.querySelector('#search-bar').addEventListener('keydown', enterPressed);
 
+document.querySelector('.sidebar-button').addEventListener('click', redirectToAddClient)
+
+
+/**
+ * Redirects to the page for adding clients
+ */
+function redirectToAddClient() {
+    window.location.assign(`client-page/client-page.html`);
+}
 
 /**
  * Iterates through an array and adds cards to the results based on data given
@@ -102,11 +111,23 @@ async function addCardToResults(data) {
     }
     clone.querySelector('.edit-button').addEventListener('click', function (e) {
         e.stopPropagation();
-        window.location.assign(`client-page/client-page.html?id=${cardIDItem.innerText}&edit=false`);
+        let card = e.target.closest('li');
+        let id = card.querySelector('.card-id').innerText;
+        window.location.assign(`client-page/client-page.html?id=${id}&edit=true`);
     });
-    clone.querySelector('.delete-button').addEventListener('click', function (e) {
+    clone.querySelector('.delete-button').addEventListener('click', async function (e) {
         e.stopPropagation();
-        console.log('Delete Button');
+        let card = e.target.closest('li');
+        let name = card.querySelector('.card-name').innerText;
+        let id = card.querySelector('.card-id').innerText;
+        if (!confirm(`Are you sure you want to delete ${name}?`)) {
+            return;
+        }
+        await fetch(`https://localhost:7082/api/Client/${id}`, {
+            method: 'DELETE',
+            body: console.log(JSON.stringify(data))
+        });
+        await searchSubmitClicked();
     });
     resultsList.appendChild(clone);
 }

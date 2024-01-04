@@ -43,15 +43,18 @@ namespace ClientManagerWebAPI.Controllers
             searchInput = searchInput.Replace(" ", "<->");
             IEnumerable<Client> clients = await _clientRepo.Search(searchInput);
             List<ClientSearchReturn> returnList = new List<ClientSearchReturn>();
-            foreach (Client c in clients)
+            if (clients != null && clients.Count() > 0)
             {
-                if (c.Media != null && c.Media.Count > 0)
+                foreach (Client c in clients)
                 {
-                    returnList.Add(new ClientSearchReturn { ClientID = c.ClientID, FirstName = c.FirstName, LastName = c.LastName, Phone = c.Phone, mediaName = c.Media[0].MediaName });
-                }
-                else
-                {
-                    returnList.Add(new ClientSearchReturn { ClientID = c.ClientID, FirstName = c.FirstName, LastName = c.LastName, Phone = c.Phone, mediaName = "" });
+                    if (c.Media != null && c.Media.Count > 0)
+                    {
+                        returnList.Add(new ClientSearchReturn { ClientID = c.ClientID, FirstName = c.FirstName, LastName = c.LastName, Phone = c.Phone, mediaName = c.Media[0].MediaName });
+                    }
+                    else
+                    {
+                        returnList.Add(new ClientSearchReturn { ClientID = c.ClientID, FirstName = c.FirstName, LastName = c.LastName, Phone = c.Phone, mediaName = "" });
+                    }
                 }
             }
             return Ok(returnList);

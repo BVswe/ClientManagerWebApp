@@ -10,85 +10,105 @@
         <link rel="stylesheet" href="client-page-styles.css">
     </head>
     <body>
-        <form id="client-form">
-            <h4>Client Information</h4>
-            <input type="text" name="firstname" placeholder="First Name" />
-            <input type="text" name="lastname" placeholder="Last Name" />
-            <input type="date" name="date" />
-            <input type="text" name="address" placeholder="Address" />
-            <input type="email" name="email" placeholder="Email" />
-            <input type="tel" name="phone" placeholder="Phone" />
-            <input type="text" name="comments" placeholder="Comments" />
-        </form>
-        <div id="pigments-form-container">
-            <h4>Pigments</h4>
-            <form id="pigments-form">
-                <label class="pigment-label">
-                    Pigment
-                    <input type="text" name="pigment" placeholder="Pigment" />
-                    <button class="specific-pigment-delete">X</button>
-                </label>
-            </form>
-            <button id="pigment-add">+</button>
-            <button id="pigment-remove">-</button>
+        <div id="fullscreen-image-container">
+            <img id="fullscreen-image" />
         </div>
-        <div id="touchups-form-container">
-            <h4>Touchups</h4>
-            <form id="touchups-form">
-                <label class="touchup-label">
+        <div id="page-header">
+            <a href ="https://localhost:7082/" id="back-button"><i id="back-arrow"></i>Client Manager</a>
+        </div>
+        <div class="info-container">
+            <form id="client-form">
+                <div class="client-info-container">
+                    <h4 id="contact-header">Contact Information</h4>
+                    <label class="input-label">
+                        First Name:
+                        <input class="client-info-input" type="text" name="firstname" />
+                    </label>
+                    <label class="input-label">
+                        Last Name:
+                        <input class="client-info-input" type="text" name="lastname" />
+                    </label>
+                    <label class="input-label">
+                        Date:
+                        <input class="date-input" type="date" name="date" />
+                    </label>
+                    <label class="input-label">
+                        Phone:
+                        <input class="phone-input" type="text" name="phone" />
+                    </label>
+                    <label class="input-label">
+                        Address:
+                        <input class="client-info-input" type="text" name="address" />
+                    </label>
+                    <label class="input-label">
+                        Email:
+                        <input class="client-info-input" type="text" name="email" />
+                    </label>
+                    <label class="input-label">
+                        Comments:
+                        <input class="client-info-input" type="text" name="comments" />
+                    </label>
+                </div>
+            </form>
+            <div id="pigments-form-container">
+                <h4>Pigments</h4>
+                <form id="pigments-form">
+                    <!--
+                    <label class="input-label">
+                        Pigment:
+                        <input type="text" name="pigment" placeholder="Pigment" />
+                        <button class="specific-pigment-delete invisible-when-viewing">X</button>
+                    </label>
+                    -->
+                </form>
+                <button class="invisible-when-viewing" id="pigment-add">+</button>
+                <button class="invisible-when-viewing" id="pigment-remove">-</button>
+            </div>
+            <div id="touchups-form-container">
+                <h4>Touchups</h4>
+                <form id="touchups-form">
+                <!--
+                <label class="input-label">
                     Touchup Date:
                     <input type="date" name="touchup" />
-                    <button class="specific-touchup-delete">X</button>
+                    <button class="specific-touchup-delete invisible-when-viewing">X</button>
                 </label>
-            </form>
-            <button id="touchup-add">+</button>
-            <button id="touchup-remove">-</button>
+                -->
+                </form>
+                <button class="invisible-when-viewing" id="touchup-add">+</button>
+                <button class="invisible-when-viewing" id="touchup-remove">-</button>
+            </div>
         </div>
         <div id="media-container">
-            <h4>Media</h4>
+            <h4 style="padding-bottom: 0; margin-bottom: 0;">Media</h4>
             <div id="media-forms-container">
-                <form class="media-form">
+            </div>
+            <button class="invisible-when-viewing" id="media-add">+</button>
+            <button class="invisible-when-viewing" id="media-remove">-</button>
+        </div>
+        <button class="invisible-when-viewing save" id="save">Save All</button>
+        <template id="media-template">
+            <form class="media-form">
+                <div class="previews-container">
+                    <img class="media-image" />
+                    <video class="media-video" controls disablepictureinpicture></video>
+                </div>
+                <div class="media-label-container">
                     <input type="file" accept="image/*, video/*" name="media" />
-                    <label>
-                        Date Taken
+                    <label class="media-label">
+                        Date Taken:
                         <input type="date" name="media-date" />
                     </label>
-                    <label>
+                    <label class="media-label before">
                         Before?
                         <input type="checkbox" name="before" value="false" />
                     </label>
-                    <label>
+                    <label class="media-label avatar">
                         Set as avatar?
                         <input type="checkbox" name="avatar" value="false" />
                     </label>
-                    <img class="media-image" />
-                    <video class="media-video" controls></video>
-                    <button class="specific-media-delete">X</button>
-                </form>
-            </div>
-            <button id="media-add">+</button>
-            <button id="media-remove">-</button>
-        </div>
-        <button id="save">Save</button>
-        <!--<button id="testbutton">Test</button>-->
-        <template id="media-template">
-            <form class="media-form">
-                <input type="file" accept="image/*, video/*" name="media" />
-                <label>
-                    Date Taken
-                    <input type="date" name="media-date" />
-                </label>
-                <label>
-                    Before?
-                    <input type="checkbox" name="before" value="false" />
-                </label>
-                <label>
-                    Set as avatar?
-                    <input type="checkbox" name="avatar" value="false" />
-                </label>
-                <img class="media-image" />
-                <video class="media-video" controls disablepictureinpicture></video>
-                <button class="specific-media-delete">X</button>
+                    <button class="specific-media-delete invisible-when-viewing">Delete</button>
+                </div>
             </form>
         </template>
     </body>

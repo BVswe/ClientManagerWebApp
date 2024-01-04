@@ -10,8 +10,8 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #191919;
-    color: white;
+    /*background-color: #191919;
+    color: white;*/
 }
 
 .body-container {
@@ -22,7 +22,7 @@ body {
 }
 
 .sidebar {
-    background-color: #353535;
+    /*background-color: #353535;*/
     position: fixed;
     display: flex;
     flex-direction: column;
@@ -32,6 +32,8 @@ body {
     width: 15%;
     height: 100%;
     padding: 10px;
+    box-shadow: 5px 0 12px -6px black;
+    background: #dce4ee;
 }
 
 .top-row-container {
@@ -41,9 +43,9 @@ body {
 
 #sidebar-header {
     text-align: left;
-    color: white;
+    /*color: white;*/
     font-size: clamp(1.25rem, 3vw, 2rem);
-    background-color: #353535;
+    /*background-color: #353535;*/
     padding: 0;
     margin: 0 0 15px 0;
 }
@@ -53,36 +55,43 @@ body {
 }
 
 #search-bar {
-    background-color: #555555;
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
+    /*background-color: #555555;*/
+    background: #dce4ee;
+    /*border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;*/
     box-shadow: none;
-    color: white;
+    /*color: white;*/
     outline: none;
     width: 100%;
-    border-color: transparent;
+    border-style: solid;
+    border-width: 0 0 2px 0;
+    border-color: #000000;
     font-size: clamp(1.5rem, 2vw, 1.75rem);
     padding: 2px 0px;
     margin: 0;
 }
 
 #search-submit {
-    border: none;
     background: none;
-    color: white;
+    border-style: solid;
+    border-width: 0 0 2px 0;
+    border-color: black;
+    /*color: white;*/
+    color: black;
     float: left;
     font-size: clamp(1.5rem, 2vw, 1.75rem);
-    background: #555555;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
+    /*background: #555555;*/
+    /*border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;*/
     height: 100%;
     cursor: pointer;
+    box-shadow: 0 0 6px -6px black;
 }
 #search-submit:hover{
-    background: #505050;
+    /*background: #505050;*/
 }
 #search-submit:active {
-    background: #454545;
+    /*background: #454545;*/
 }
 
 #search-submit-symbol {
@@ -96,12 +105,12 @@ body {
 
 .search-symbol {
     font-size: clamp(1.5rem, 2vw, 1.75rem);
-    background-color: #454545;
+    /*background-color: #454545;*/
     -webkit-transform: rotate(45deg);
     -moz-transform: rotate(45deg);
     -o-transform: rotate(45deg);
     transform: rotate(45deg);
-    color: white;
+    /*color: white;*/
 }
 
 .sidebar-button {
@@ -114,7 +123,8 @@ body {
 
 #results-text {
     text-align: left;
-    color: white;
+    /*color: white;*/
+    color: #506982;
     font-size: clamp(1.5rem, 4vw, 1.75rem);
     padding: 0 0 0 15px;
     margin: 10px 0 0 15%;
@@ -135,8 +145,8 @@ body {
 
 .card{
     /* Add shadows to create the "card" effect */
-    box-shadow: 0px 0px 2px 1px rgba(131, 131, 131, 0.5);
-    background-color: #252525;
+    box-shadow: 0px 0px 2px 1px rgba(40, 40, 40, 0.5);
+    /*background-color: #252525;*/
     transition: 0.3s;
     border-radius: 4px;
     gap: 12px;
@@ -149,12 +159,12 @@ body {
 }
 
 .card:hover {
-    box-shadow: 2px 2px 8px 2px rgba(200, 200, 200, 0.562);
+    box-shadow: 2px 2px 8px 2px rgba(20, 20, 20, 0.562);
 }
 
 .card-text-container {
     display: inline-block;
-    background-color: #252525;
+    /*background-color: #252525;*/
     overflow-x: hidden;
     padding: 0;
     margin: 0;
@@ -190,7 +200,7 @@ body {
     padding-left: 8px;
     padding-top: 4px;
     padding-bottom: 4px;
-    background-color: #252525;
+    /*background-color: #252525;*/
 }
 
 
@@ -230,7 +240,7 @@ body {
     }
 
     .sidebar {
-        background-color: #353535;
+        /*background-color: #353535;*/
         position: sticky;
         display: flex;
         flex-direction: row;
@@ -251,9 +261,9 @@ body {
         font-size: clamp(1.2rem, 3vw, 2rem);
     }
     #sidebar-header {
-        color: white;
+        /*color: white;*/
         font-size: clamp(1.5rem, 3vw, 2rem);
-        background-color: #353535;
+        /*background-color: #353535;*/
         padding: 0;
         margin: 0;
     }
