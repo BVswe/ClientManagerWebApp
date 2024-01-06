@@ -17,8 +17,8 @@ async function loadClient() {
     const id = urlParams.get('id') ? urlParams.get('id') : false;
     if (id) {
         let response = await getSingleClientInfo(id);
-        console.log("Response:");
-        console.log(response);
+        //console.log("Response:");
+        //console.log(response);
         //Set client data
         document.querySelector('[name="firstname"]').value = response["firstName"];
         document.querySelector('[name="lastname"]').value = response["lastName"];
@@ -110,8 +110,8 @@ async function loadClient() {
                 avatar: currentForm.querySelector('[name="avatar"]').checked ? true : false,
             });
         }
-        console.log("Original Data:");
-        console.log(origData);
+        //console.log("Original Data:");
+        //console.log(origData);
     }
     else {
         let elements = document.querySelectorAll('.invisible-when-viewing');
@@ -392,7 +392,7 @@ function addMediaInSection(date) {
     clone.querySelector('[name="before"]').onclick = changeCheckboxValueBefore;
     clone.querySelector('.specific-media-delete').onclick = removeMediaButton;
     clone.querySelector('.media-image').onclick = imageClicked;
-    console.log(correctSection);
+    //console.log(correctSection);
     if (correctSection) {
         let container = correctSection.querySelector('.media-date-item-container');
         container.appendChild(clone);
@@ -479,7 +479,7 @@ function addMediaInBeforeSection() {
     clone.querySelector('[name="before"]').onclick = changeCheckboxValueBefore;
     clone.querySelector('.specific-media-delete').onclick = removeMediaButton;
     clone.querySelector('.media-image').onclick = imageClicked;
-    console.log(correctSection);
+    //console.log(correctSection);
     if (correctSection) {
         let container = correctSection.querySelector('.media-date-item-container');
         container.appendChild(clone);
@@ -555,7 +555,7 @@ async function saveAll() {
     })
         .then(response => response.json())
         .then(json => clientID = JSON.stringify(json.clientID));
-    console.log(clientID);
+    //console.log(clientID);
     for (let pigment of pigments) {
         if (!pigment) {
             continue;
@@ -585,8 +585,8 @@ async function saveAll() {
         if (!singleMediaForm.get('media')) {
             continue;
         }
-        console.log(singleMediaForm.get("before"));
-        console.log(singleMediaForm.get("avatar"));
+        //console.log(singleMediaForm.get("before"));
+        //console.log(singleMediaForm.get("avatar"));
         let submitMediaForm = new FormData();
         //Make sure "media" (the img/video) always goes last
         submitMediaForm.append("MediaDate", singleMediaForm.get("media-date"));
@@ -655,7 +655,7 @@ async function updateAll() {
     //Check if client data is the same as original data from the database (client data is first 6 entries), and if the data is different update it
     if (JSON.stringify(Object.fromEntries(Object.entries(data).slice(0, 7)))
         == JSON.stringify(Object.fromEntries(Object.entries(origData).slice(0, 7)))) {
-        console.log("Same");
+        //console.log("Same");
     }
     else {
         await fetch(`https://localhost:7082/api/Client/${clientID}`, {
@@ -666,8 +666,8 @@ async function updateAll() {
             body: JSON.stringify(data)
         })
             .then(response => response.json())
-            .then(json => console.log(JSON.stringify(json)));
-        console.log("Different");
+            .then(json => JSON.stringify(json));
+        //console.log("Different");
     }
 
     await updateDbFromArray(pigments, clientID, "pigment");
@@ -703,7 +703,7 @@ async function updateDbFromArray(newValues, cid, type) {
     let updateCount = Math.min(newValues.length, originalValues.length);
 
     if (type == "pigment") {
-        console.log("pigment");
+        //console.log("pigment");
         //Update database as many times as necessary
         for (let i = 0; i < updateCount; i++) {
             await fetch(`https://localhost:7082/api/ClientPigment/${cid}/${originalValues[i]}`, {
@@ -723,7 +723,7 @@ async function updateDbFromArray(newValues, cid, type) {
 
         //Delete pigments from the database if the array of original pigments still has values
         if (originalValues.length) {
-            console.log("Deleting pigments");
+            //console.log("Deleting pigments");
             for (let singlePigment of originalValues) {
                 await fetch(`https://localhost:7082/api/ClientPigment/${cid}`, {
                     method: 'DELETE',
@@ -737,7 +737,7 @@ async function updateDbFromArray(newValues, cid, type) {
         //Inserts pigments into the database if the array of new pigments still has values.
         //Only one of this if statement or the one above should run, if more than one runs there's a problem with the logic
         if (newValues.length) {
-            console.log("Adding pigments");
+            //console.log("Adding pigments");
             for (let singlePigment of newValues) {
                 await fetch(`https://localhost:7082/api/ClientPigment/${cid}`, {
                     method: 'POST',
@@ -750,7 +750,7 @@ async function updateDbFromArray(newValues, cid, type) {
         }
     }
     else {
-        console.log("touchup");
+        //console.log("touchup");
         //Update database as many times as necessary
         for (let i = 0; i < updateCount; i++) {
             await fetch(`https://localhost:7082/api/ClientTouchup/${cid}/${originalValues[i]}`, {
@@ -770,7 +770,7 @@ async function updateDbFromArray(newValues, cid, type) {
 
         //Delete touchups from the database if the array of original touchups still has values
         if (originalValues.length) {
-            console.log("Deleting touchups");
+            //console.log("Deleting touchups");
             for (let singleTouchup of originalValues) {
                 await fetch(`https://localhost:7082/api/ClientTouchup/${cid}`, {
                     method: 'DELETE',
@@ -784,7 +784,7 @@ async function updateDbFromArray(newValues, cid, type) {
         //Inserts touchups into the database if the array of new touchups still has values.
         //Only one of this if statement or the one above should run, if more than one runs there's a problem with the logic
         if (newValues.length) {
-            console.log("Adding touchups");
+            //console.log("Adding touchups");
             for (let singleTouchup of newValues) {
                 await fetch(`https://localhost:7082/api/ClientTouchup/${cid}`, {
                     method: 'POST',
@@ -801,7 +801,7 @@ async function updateDbFromArray(newValues, cid, type) {
 async function updateDbMedia(mediaForm, cid) {
     let origMedia = [...origData.media];
     for (let mediaData of mediaForm) {
-        console.log(1);
+        //console.log(1);
         let singleMediaForm = new FormData(mediaData);
         if (!mediaData.querySelector('[name="media"]').value && mediaData.querySelector('[name="media"]').style.display != 'none') {
             continue;
@@ -812,7 +812,7 @@ async function updateDbMedia(mediaForm, cid) {
         if (!singleMediaForm.get('avatar')) {
             singleMediaForm.append("avatar", false);
         }
-        console.log(mediaData.querySelector('[name="media"]').value);
+        //console.log(mediaData.querySelector('[name="media"]').value);
         if (!mediaData.querySelector('[name="media"]').value && mediaData.querySelector('[name="media"]').style.display == 'none') {
             let mediaUrl = mediaData.querySelector(".media-image").src ? mediaData.querySelector(".media-image").src : mediaData.querySelector(".media-video").src;
             let matchedIndex;
@@ -826,17 +826,17 @@ async function updateDbMedia(mediaForm, cid) {
             }
             if (matchedIndex != null) {
                 
-                console.log(origMedia[matchedIndex].before.toString());
-                console.log(singleMediaForm.get('before'));
-                console.log(origMedia[matchedIndex].avatar.toString());
-                console.log(singleMediaForm.get('avatar'));
-                console.log(origMedia[matchedIndex].mediaDate);
-                console.log(singleMediaForm.get('media-date'));
+                //console.log(origMedia[matchedIndex].before.toString());
+                //console.log(singleMediaForm.get('before'));
+                //console.log(origMedia[matchedIndex].avatar.toString());
+                //console.log(singleMediaForm.get('avatar'));
+                //console.log(origMedia[matchedIndex].mediaDate);
+                //console.log(singleMediaForm.get('media-date'));
                 
                 if (!(origMedia[matchedIndex].before.toString() == singleMediaForm.get('before')
                     && origMedia[matchedIndex].avatar.toString() == singleMediaForm.get('avatar')
                     && origMedia[matchedIndex].mediaDate == singleMediaForm.get('media-date'))) {
-                    console.log("fetching media update");
+                    //console.log("fetching media update");
 
                     await fetch(`https://localhost:7082/api/ClientMedia/${cid}`, {
                         method: 'PUT',
