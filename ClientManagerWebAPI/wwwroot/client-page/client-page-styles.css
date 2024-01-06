@@ -91,11 +91,18 @@ input[type=text] {
     width: max(80%, 100px);
     border: 1px solid black;
 }
+input[type=text]:disabled {
+    background: white;
+    color: black;
+}
 
 input[type=date] {
     border: 1px solid black;
 }
-
+input[type=date]:disabled {
+    background: white;
+    color: black;
+}
 .date-input {
     width: max(80%, 100px);
 }
@@ -117,12 +124,31 @@ input[name='avatar'] {
     margin-left: auto;
 }
 
+input[name='comments'] {
+    word-break: break-word;
+}
+
 .input-label {
     display: grid;
     flex-direction: column;
     gap: 4px;
     /*align-items: center;
     justify-content: center;*/
+}
+
+#comments {
+    display: inline;
+    padding: 2px;
+    min-height: 1.7rem; 
+    width: max(80%, 100px);
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+    cursor: text;
+    white-space: pre-wrap;
+}
+#comments:focus {
+    border-width: 2px;
 }
 
 .text-button-container {
@@ -229,6 +255,7 @@ input[name='avatar'] {
 
 #media-container {
     padding: 10px 23px;
+    margin-bottom: 100px;
 }
 
 .media-date-section {
@@ -305,6 +332,10 @@ input[name='avatar'] {
 }
 
 .media-video {
+    width: clamp(10rem, 40vw, 20rem);
+    height: auto;
+    max-height: max(60vh);
+    justify-self: center;
     display: none;
 }
 

@@ -23,7 +23,15 @@ async function loadDatabase(offset) {
         alert('Could not fetch data from server.');
         return;
     }
-    return response.json();
+    try {
+        //console.log(response);
+        let jsonResponse = response.json();
+        //console.log(jsonResponse);
+        return jsonResponse;
+    }
+    catch (err) {
+        return '';
+    }
 }
 
 /**

@@ -26,7 +26,7 @@ async function loadClient() {
         document.querySelector('[name="address"]').value = response["address"];
         document.querySelector('[name="email"]').value = response["email"];
         document.querySelector('[name="phone"]').value = response["phone"];
-        document.querySelector('[name="comments"]').value = response["comments"];
+        document.querySelector("#comments").textContent = response["comments"];
 
         origData.firstname = response["firstName"];
         origData.lastname = response["lastName"];
@@ -152,8 +152,10 @@ async function loadClient() {
         topbar.appendChild(editButton);
         let inputs = document.querySelectorAll('input');
         for (let input of inputs) {
-            input.readOnly = true;
+            input.disabled = true;
         }
+        document.querySelector('#comments').setAttribute('contenteditable', false);
+        document.querySelector('#comments').style.cursor = 'default';
     }
     let sections = document.querySelectorAll('.media-date-section');
     if (sections && sections.length > 0) {
@@ -170,12 +172,14 @@ async function loadClient() {
 function editClicked() {
     const url = new URL(window.location.href);
     url.searchParams.set("edit", "true")
-    window.history.pushState({} , '', url);
+    window.history.replaceState({} , '', url);
     document.querySelector('#save').onclick = updateAll;
     let inputs = document.querySelectorAll('input');
     for (let input of inputs) {
-        input.readOnly = false;
+        input.disabled = false;
     }
+    document.querySelector('#comments').setAttribute('contenteditable', true);
+    document.querySelector('#comments').style.cursor = 'text';
     let elements = document.querySelectorAll('.invisible-when-viewing');
     let mediaLabels = document.querySelectorAll('.media-label');
     for (let element of elements) {
@@ -292,6 +296,11 @@ function removeClosestLabel(e) {
 }
 
 function previewImage(e) {
+    if (document.querySelector('[name="date"]').value && document.querySelector('[name="date"]').value != '') {
+        if (e.target.closest('form').querySelector('[name="media-date"]').value == '') {
+            e.target.closest('form').querySelector('[name="media-date"]').value = document.querySelector('[name="date"]').value;
+        }
+    }
     const container = e.target.closest('form');
     const mediaImage = container.querySelector('.media-image')
     const mediaVideo = container.querySelector('.media-video')
@@ -370,6 +379,9 @@ function addMedia() {
     clone.querySelector('[name="before"]').onclick = changeCheckboxValueBefore;
     clone.querySelector('.specific-media-delete').onclick = removeMediaButton;
     clone.querySelector('.media-image').onclick = imageClicked;
+    if (document.querySelector('[name="date"]').value && document.querySelector('[name="date"]').value != '') {
+        clone.querySelector('[name="media-date"]').value = document.querySelector('[name="date"]').value;
+    }
     mediaForm.appendChild(clone);
 }
 
@@ -392,6 +404,9 @@ function addMediaInSection(date) {
     clone.querySelector('[name="before"]').onclick = changeCheckboxValueBefore;
     clone.querySelector('.specific-media-delete').onclick = removeMediaButton;
     clone.querySelector('.media-image').onclick = imageClicked;
+    if (document.querySelector('[name="date"]').value && document.querySelector('[name="date"]').value != '') {
+        clone.querySelector('[name="media-date"]').value = document.querySelector('[name="date"]').value;
+    }
     //console.log(correctSection);
     if (correctSection) {
         let container = correctSection.querySelector('.media-date-item-container');
@@ -479,6 +494,9 @@ function addMediaInBeforeSection() {
     clone.querySelector('[name="before"]').onclick = changeCheckboxValueBefore;
     clone.querySelector('.specific-media-delete').onclick = removeMediaButton;
     clone.querySelector('.media-image').onclick = imageClicked;
+    if (document.querySelector('[name="date"]').value && document.querySelector('[name="date"]').value != '') {
+        clone.querySelector('[name="media-date"]').value = document.querySelector('[name="date"]').value;
+    }
     //console.log(correctSection);
     if (correctSection) {
         let container = correctSection.querySelector('.media-date-item-container');
@@ -537,14 +555,16 @@ async function saveAll() {
     }
     for (let mediaData of mediaForm) {
         let singleMediaForm = new FormData(mediaData);
-        if (singleMediaForm.get('media') && singleMediaForm.get('media-date') == '') {
-            alert('Please fill in media date')
+        if (mediaData.querySelector('[name="media"').files.length > 0 && singleMediaForm.get('media-date') == '') {
+            alert('Media date is missing on one or more images/videos. Please fill it in before saving.');
             return;
         }
     }
     const pigments = pigmentsForm.getAll("pigment");
     const touchups = touchupsForm.getAll("touchup");
     let data = Object.fromEntries(clientForm);
+    data.comments = document.querySelector("#comments").textContent;
+    console.log(data);
     let clientID = 0;
     await fetch(`https://localhost:7082/api/Client/`, {
         method: 'POST',
@@ -581,10 +601,10 @@ async function saveAll() {
         })
     }
     for (let mediaData of mediaForm) {
-        let singleMediaForm = new FormData(mediaData);
-        if (!singleMediaForm.get('media')) {
+        if (mediaData.querySelector('[name="media"').files.length == 0) {
             continue;
         }
+        let singleMediaForm = new FormData(mediaData);
         //console.log(singleMediaForm.get("before"));
         //console.log(singleMediaForm.get("avatar"));
         let submitMediaForm = new FormData();
@@ -641,8 +661,8 @@ async function updateAll() {
     }
     for (let mediaData of mediaForm) {
         let singleMediaForm = new FormData(mediaData);
-        if (singleMediaForm.get('media').value && singleMediaForm.get('media-date') == '') {
-            alert('Media data is missing on one or more images/videos')
+        if (mediaData.querySelector('[name="media"').files.length > 0 && singleMediaForm.get('media-date') == '') {
+            alert('Media date is missing on one or more images/videos. Please fill it in before saving.')
             return;
         }
     }
@@ -651,7 +671,8 @@ async function updateAll() {
     let pigments = pigmentsForm.getAll("pigment");
     let touchups = touchupsForm.getAll("touchup");
     let data = Object.fromEntries(clientForm);
-
+    data.comments = document.querySelector("#comments").textContent;
+    console.log(data);
     //Check if client data is the same as original data from the database (client data is first 6 entries), and if the data is different update it
     if (JSON.stringify(Object.fromEntries(Object.entries(data).slice(0, 7)))
         == JSON.stringify(Object.fromEntries(Object.entries(origData).slice(0, 7)))) {

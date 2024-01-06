@@ -120,6 +120,11 @@ body {
     min-height: 25px;
 }
 
+#results-container {
+    display: grid;
+    margin-left: 15%;
+}
+
 #results-text {
     text-align: left;
     /*color: white;*/
@@ -137,10 +142,22 @@ body {
     overflow: hidden;
     padding: 15px 15px 15px 15px;
     margin-top: 0;
-    margin-left: 15%;
     /* margin: 10px clamp(3px, 2vw, 10px) 0 clamp(3px, 2vw, 10px); */
 }
 
+#no-results {
+    display: none;
+    font-size: 1rem;
+    align-self: center;
+    justify-self: center;
+}
+
+#load-more {
+    display: none;
+    font-size: 1rem;
+    align-self: center;
+    justify-self: center;
+}
 
 .card{
     /* Add shadows to create the "card" effect */

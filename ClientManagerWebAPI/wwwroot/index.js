@@ -8,6 +8,26 @@ document.querySelector('#search-bar').addEventListener('keydown', enterPressed);
 
 document.querySelector('.sidebar-button').addEventListener('click', redirectToAddClient)
 
+document.querySelector('#load-more').addEventListener('click', loadMore)
+
+async function loadMore() {
+    const results = document.querySelectorAll('.card');
+    await loadDatabase(results.length)
+        .then((results) => {
+            (async () => {
+                //console.log(results);
+                if (results.length == 0) {
+                    //console.log(document.querySelector('#load-more'));
+                    document.querySelector('#load-more').style.display = 'none';
+                    return;
+                }
+                await displayClients(results);
+            })()
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+}
 
 /**
  * Redirects to the page for adding clients
@@ -52,6 +72,7 @@ function resultClicked(e) {
  * @returns nothing
  */
 async function searchSubmitClicked() {
+    document.querySelector('#no-results').style.display = 'none';
     const searchText = document.querySelector('#search-bar');
     const resultsList = document.querySelector('.results-grid');
     resultsList.innerHTML = "";
@@ -65,6 +86,12 @@ async function searchSubmitClicked() {
             .catch((err) => {
                 console.log(err);
             });
+        if (document.querySelectorAll('.card').length >= 10) {
+            document.querySelector('#load-more').style.display = 'inline';
+        }
+        else if (document.querySelectorAll('.card').length == 0) {
+            document.querySelector('#no-results').style.display = 'inline';
+        }
         return;
     }
 

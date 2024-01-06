@@ -18,10 +18,14 @@ namespace ClientManagerWebAPI.Controllers
         }
         // GET: api/<ClientController>
         [HttpGet]
-        public async Task<IActionResult> Get50([FromQuery] int currentOffset)
+        public async Task<IActionResult> Get10([FromQuery] int currentOffset)
         {
-            IEnumerable<Client> clients =  await _clientRepo.Get50(currentOffset);
+            IEnumerable<Client> clients =  await _clientRepo.Get10(currentOffset);
             List<ClientSearchReturn> returnList = new List<ClientSearchReturn>();
+            if (clients == null)
+            {
+                return Ok(returnList);
+            }
             foreach(Client c in clients)
             {
                 if (c.Media != null && c.Media.Count > 0)

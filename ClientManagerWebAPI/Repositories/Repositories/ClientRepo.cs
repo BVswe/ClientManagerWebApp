@@ -74,14 +74,14 @@ namespace ClientManagerWebAPI.Repositories.Repositories
             }
         }
         /// <summary>
-        /// WIP, will get 50 clients offset from an inputted integer later
+        /// Get 10 clients offset from an inputted integer
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<Client>> Get50(int currentOffset)
+        public async Task<IEnumerable<Client>> Get10(int currentOffset)
         {
             string query = $"SELECT clients.client_id, first_name, last_name, phone, client_media.client_id, client_media.media_name FROM clients" +
                 $" LEFT JOIN client_media ON clients.client_id = client_media.client_id AND client_media.avatar = 'true'" +
-                $" LIMIT 50 OFFSET {currentOffset};";
+                $" LIMIT 10 OFFSET {currentOffset};";
             using (var connection = new NpgsqlConnection(_connectionString))
             {
                 IEnumerable<Client> retrievedClients =  await connection.QueryAsync<Client, ClientMedia, Client>(query, (client, media) =>
@@ -110,12 +110,12 @@ namespace ClientManagerWebAPI.Repositories.Repositories
             {
                 query = $"SELECT clients.client_id, first_name, last_name, phone, client_media.client_id, client_media.media_name" +
                     $" FROM clients LEFT JOIN client_media ON clients.client_id = client_media.client_id AND client_media.avatar = 'true'" +
-                    $" WHERE LOWER(first_name) LIKE LOWER('{searchInput}%') ORDER BY first_name LIMIT 50";
+                    $" WHERE LOWER(first_name) LIKE LOWER('{searchInput}%') ORDER BY first_name LIMIT 10";
             }
             else {
                 query = $"SELECT clients.client_id, first_name, last_name, phone, client_media.client_id, client_media.media_name, ts_rank_cd(clients.ts, query) as \"score\"" +
                     $" FROM clients LEFT JOIN client_media ON clients.client_id = client_media.client_id AND client_media.avatar = 'true'," +
-                    $" to_tsquery('english_nostop', '{searchInput}:*') as query WHERE ts @@ query ORDER BY score DESC LIMIT 50;";
+                    $" to_tsquery('english_nostop', '{searchInput}:*') as query WHERE ts @@ query ORDER BY score DESC LIMIT 10;";
             }
             using (var connection = new NpgsqlConnection(_connectionString))
             {
