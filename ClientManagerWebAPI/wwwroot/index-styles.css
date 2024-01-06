@@ -85,7 +85,6 @@ body {
     border-bottom-right-radius: 4px;*/
     height: 100%;
     cursor: pointer;
-    box-shadow: 0 0 6px -6px black;
 }
 #search-submit:hover{
     /*background: #505050;*/

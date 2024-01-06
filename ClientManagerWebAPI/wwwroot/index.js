@@ -22,7 +22,7 @@ function redirectToAddClient() {
  * @param {Array} results
  */
 async function displayClients(results) {
-    console.log(results);
+    //console.log(results);
     for (let i = 0; i < results.length; i++) {
         await addCardToResults(results[i]);
     }
@@ -105,8 +105,8 @@ async function addCardToResults(data) {
     if (data.mediaName) {
         image = await getMediaFromDB(data.clientID, data.mediaName);
         imageUrl = URL.createObjectURL(image);
-        console.log(clone.querySelector('.image'));
-        console.log(imageUrl);
+        //console.log(clone.querySelector('.image'));
+        //console.log(imageUrl);
         clone.querySelector('.image').src = imageUrl;
     }
     clone.querySelector('.edit-button').addEventListener('click', function (e) {
