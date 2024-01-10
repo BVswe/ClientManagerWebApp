@@ -6,3 +6,5 @@ Be sure to have an existing Postgres database and to change the database strings
 DBSetup should use your user id and the default database.
 
 Default should use client_manager_db as the database instead.
+
+Publish using Visual Studio.
