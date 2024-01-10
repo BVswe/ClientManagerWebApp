@@ -14,6 +14,10 @@ body {
     color: white;*/
 }
 
+button {
+    color: black;
+}
+
 .body-container {
     display: flex;
     flex-direction: row;
@@ -69,6 +73,7 @@ body {
     font-size: clamp(1.5rem, 2vw, 1.75rem);
     padding: 2px 0px;
     margin: 0;
+    border-radius: 0px;
 }
 
 #search-submit {
@@ -85,6 +90,7 @@ body {
     border-bottom-right-radius: 4px;*/
     height: 100%;
     cursor: pointer;
+    border-radius: 0px;
 }
 #search-submit:hover{
     /*background: #505050;*/
@@ -118,6 +124,7 @@ body {
     white-space: normal;
     word-wrap: break-word;
     min-height: 25px;
+    color: black;
 }
 
 #results-container {
@@ -203,6 +210,7 @@ body {
 }
 
 .edit-button, .delete-button {
+    color: black;
     font-size: clamp(0.8rem, 3vw, 1.4rem);
     font-weight: normal;
     min-height: 25px;

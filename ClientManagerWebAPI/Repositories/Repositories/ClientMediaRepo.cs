@@ -73,7 +73,22 @@ namespace ClientManagerWebAPI.Repositories.Repositories
             {
                 return null;
             }
-            FileStream fs = await Task.Run(() => File.Open(path, FileMode.Open));
+            bool x = true;
+            FileStream fs = null;
+            while (x)
+            {
+                try
+                {
+                    fs = await Task.Run(() => File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read));
+                    x = false;
+                }
+                //Do nothing because the program should just try again
+                catch
+                {
+                    await Task.Delay(1000);
+                    continue;
+                }
+            }
             return fs;
         }
 

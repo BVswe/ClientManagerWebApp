@@ -69,9 +69,14 @@ namespace ClientManagerWebAPI.Controllers
             {
                 return StatusCode(422, "Media not found on disk");
             }
+            var file = File(stream, contentType, fileName);
+            if (contentType == "video/mp4" || contentType == "video/quicktime")
+            {
+                file.EnableRangeProcessing = true;
+            }
             //Stream is cleaned up by framework - source code wraps stream in using statement.
             //See https://source.dot.net/#Microsoft.AspNetCore.Mvc.Core/src/Shared/ResultsHelpers/FileResultHelper.cs,da837f27cbb1a1a8
-            return File(stream, contentType, fileName);
+            return file;
         }
 
         // GET api/<ClientMediaController>/5

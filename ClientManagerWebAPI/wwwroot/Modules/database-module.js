@@ -1,10 +1,12 @@
+const ip = window.location.origin;
+
 /**
  * Searches database for a client using async await and fetch
  * @param {String} searchString
  * @returns JSON
  */
 async function searchDatabase(searchString) {
-    const response = await fetch(`https://localhost:7082/api/Client/Search?searchInput=${searchString}`);
+    const response = await fetch(`${ip}/api/Client/Search?searchInput=${searchString}`);
     if (!response.ok) {
         alert('Could not fetch data from server.');
         return;
@@ -18,7 +20,7 @@ async function searchDatabase(searchString) {
  * @returns JSON
  */
 async function loadDatabase(offset) {
-    const response = await fetch(`https://localhost:7082/api/Client?currentOffset=${offset}`);
+    const response = await fetch(`${ip}/api/Client?currentOffset=${offset}`);
     if (!response.ok) {
         alert('Could not fetch data from server.');
         return;
@@ -40,7 +42,7 @@ async function loadDatabase(offset) {
  * @returns JSON
  */
 async function getSingleClientInfo(id) {
-    const response = await fetch(`https://localhost:7082/api/Client/${id}/All`);
+    const response = await fetch(`${ip}/api/Client/${id}/All`);
     if (!response.ok) {
         alert('Could not fetch data from server.');
         return;
@@ -55,7 +57,7 @@ async function getSingleClientInfo(id) {
  * @returns Blob
  */
 async function getMediaFromDB(id, mediaName) {
-    let image = await fetch(`https://localhost:7082/api/ClientMedia/${id}/${mediaName}`);
+    let image = await fetch(`${ip}/api/ClientMedia/${id}/${mediaName}`);
     return image.blob();
 }
 

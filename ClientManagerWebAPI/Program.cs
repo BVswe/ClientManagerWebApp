@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using System.Diagnostics;
+using System.Net;
 
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 SqlMapper.AddTypeHandler(new DapperSqlDateOnlyTypeHandler());
@@ -38,6 +39,12 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<AddUnboundParametersOperationFilter>();
 });
 
+//builder.Services.AddHttpsRedirection(options =>
+//{
+//    options.RedirectStatusCode = (int)HttpStatusCode.TemporaryRedirect;
+//    options.HttpsPort = 5001;
+//});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -52,7 +59,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 //app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
@@ -64,5 +71,15 @@ app.MapControllers();
 
 var dbs = app.Services.GetService<DBSetup>();
 await dbs!.Init();
+
+app.Urls.Add("http://0.0.0.0:8080");
+
+Debug.WriteLine(Dns.GetHostName());
+foreach(var addr in Dns.GetHostAddresses(Dns.GetHostName()))
+{
+    Debug.WriteLine(addr);
+}
+Debug.WriteLine(Dns.GetHostAddresses(Dns.GetHostName()));
+
 
 app.Run();

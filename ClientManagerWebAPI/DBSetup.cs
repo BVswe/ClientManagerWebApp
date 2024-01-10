@@ -21,9 +21,11 @@ namespace ClientManagerWebAPI
         {
             // create database if it doesn't exist
             var connectionString = _connectionConfig.Value.DBSetup;
+            //Console.WriteLine(connectionString);
             using (var connection = new NpgsqlConnection(connectionString))
             {
                 string sqlDbCount = $"SELECT COUNT(*) FROM pg_database WHERE datname = '{_connectionConfig.Value.DBName}';";
+                //Console.WriteLine(_connectionConfig.Value.DBName);
                 int dbCount = await connection.ExecuteScalarAsync<int>(sqlDbCount);
                 if (dbCount == 0)
                 {
@@ -37,12 +39,12 @@ namespace ClientManagerWebAPI
         {
             using (var connection = new NpgsqlConnection(_connectionConfig.Value.Default))
             {
+                await _configureSearchDictionary();
                 await _initClientTable();
                 await _initClientMedia();
                 await _initClientPigments();
                 await _initClientTouchups();
-                await _configureSearchDictionary();
-
+                
                 async Task _initClientTable()
                 {
                     string query = @"CREATE TABLE IF NOT EXISTS clients (

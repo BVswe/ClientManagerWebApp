@@ -48,9 +48,10 @@ body::-webkit-scrollbar-track-piece:start {
 
 button {
     /*background-color: #353535;*/
+    color: black;
 }
 
-#fullscreen-image-container {
+.fullscreen-container {
     display: none;
     position: fixed;
     background-color: rgba(0, 0, 0, 0.8);
@@ -64,9 +65,23 @@ button {
     z-index: 10;
 }
 
+#save-notification-container {
+    pointer-events: none;
+}
+
+#save-notification {
+    font-size: 1.5rem;
+    padding: 10px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    background: white;
+    justify-self: center;
+    align-self: center;
+    border-radius: 2px;
+}
+
 #fullscreen-image {
-    max-width: 80%;
-    max-height: 80%;
+    max-width: 95vw;
+    max-height: 95vh;
     object-fit: scale-down;
     cursor: zoom-out;
     z-index: 10;
@@ -85,6 +100,7 @@ h4 {
     padding-bottom: 5px;
     margin-bottom: 20px;
     color: var(--asphalt);
+    font-family: 'Roboto', sans-serif;
 }
 
 input[type=text] {
@@ -94,14 +110,20 @@ input[type=text] {
 input[type=text]:disabled {
     background: white;
     color: black;
+    -webkit-text-fill-color: black; /* Override iOS / Android font color change */
+    -webkit-opacity: 1; /* Override iOS opacity change affecting text & background color */
 }
 
 input[type=date] {
     border: 1px solid black;
+    color: black;
+    background: white;
 }
 input[type=date]:disabled {
     background: white;
     color: black;
+    -webkit-text-fill-color: black; /* Override iOS / Android font color change */
+    -webkit-opacity: 1; /* Override iOS opacity change affecting text & background color */
 }
 .date-input {
     width: max(80%, 100px);
@@ -250,7 +272,7 @@ input[name='comments'] {
 
 #media-forms-container {
     display: grid;
-    gap: 10px;
+    gap: 8px;
 }
 
 #media-container {
@@ -313,8 +335,9 @@ input[name='comments'] {
 .media-label-container {
     display: grid;
     grid-column: 1;
-    margin-top: auto;
     gap: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .previews-container {
@@ -325,7 +348,6 @@ input[name='comments'] {
     width: clamp(10rem, 40vw, 20rem);
     height: auto;
     display: none;
-    margin: 0 0 8px 0;
     object-fit: scale-down;
     justify-self: center;
     cursor: zoom-in;

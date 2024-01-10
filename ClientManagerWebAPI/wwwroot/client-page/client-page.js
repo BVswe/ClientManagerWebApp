@@ -1,5 +1,8 @@
 import { getSingleClientInfo, getMediaFromDB } from '../Modules/database-module.js';
 
+const ip = window.location.origin;
+let origData = {};
+
 document.querySelector('#pigment-add').addEventListener('click', addPigment);
 document.querySelector('#pigment-remove').addEventListener('click', removePigment);
 document.querySelector('#touchup-add').addEventListener('click', addTouchup);
@@ -9,7 +12,7 @@ document.querySelector('#media-remove').addEventListener('click', removeMedia);
 document.querySelector('#fullscreen-image-container').addEventListener('click', fullscreenImageMinimize);
 document.querySelector('#save').onclick = saveAll;
 document.addEventListener("DOMContentLoaded", loadClient);
-let origData = {};
+document.querySelector('#back-button').setAttribute('href', `${ip}`);
 
 async function loadClient() {
 
@@ -90,20 +93,19 @@ async function loadClient() {
                 currentForm.querySelector('[name="avatar"]').checked = false;
             }
             currentForm.querySelector('[name="media"]').style.display = "none";
-            let mediaUrl = URL.createObjectURL(await getMediaFromDB(id, media[i].mediaName));
             if (isVideo(media[i].mediaName)) {
-                currentForm.querySelector('.media-video').src = mediaUrl;
+                currentForm.querySelector('.media-video').src = `${ip}/api/ClientMedia/${id}/${media[i].mediaName}`;
                 currentForm.querySelector('.media-video').style.display = "inline";
                 currentForm.querySelector('.media-image').style.display = "none";
             }
             else {
-                currentForm.querySelector('.media-image').src = mediaUrl;
+                currentForm.querySelector('.media-image').src = `${ip}/api/ClientMedia/${id}/${media[i].mediaName}`;
                 currentForm.querySelector('.media-image').style.display = "inline";
                 currentForm.querySelector('.media-video').style.display = "none";
-            }
+            } 
 
             origData.media.push({
-                blobUrl: currentForm.querySelector('.media-video').src ? currentForm.querySelector('.media-video').src = mediaUrl : currentForm.querySelector('.media-image').src,
+                blobUrl: currentForm.querySelector('.media-video').src ? currentForm.querySelector('.media-video').src : currentForm.querySelector('.media-image').src,
                 mediaName: media[i].mediaName,
                 mediaDate: media[i].mediaDate,
                 before: currentForm.querySelector('[name="before"]').checked ? true : false,
@@ -140,7 +142,7 @@ async function loadClient() {
             label.style.display = "flex";
         }
     }
-    else if (arr.length > 1 && arr[1] !== '') {
+    else if (arr.length > 1 && arr[1] != '') {
         let editButton = document.createElement('button');
         editButton.className = "edit-button";
         editButton.style.position = "relative";
@@ -156,6 +158,10 @@ async function loadClient() {
         }
         document.querySelector('#comments').setAttribute('contenteditable', false);
         document.querySelector('#comments').style.cursor = 'default';
+        let mediaLabelContainer = document.querySelectorAll('.media-label-container')
+        for (let container of mediaLabelContainer) {
+            container.style.display = 'none';
+        }
     }
     let sections = document.querySelectorAll('.media-date-section');
     if (sections && sections.length > 0) {
@@ -181,6 +187,10 @@ function editClicked() {
     document.querySelector('#comments').setAttribute('contenteditable', true);
     document.querySelector('#comments').style.cursor = 'text';
     let elements = document.querySelectorAll('.invisible-when-viewing');
+    let mediaLabelContainer = document.querySelectorAll('.media-label-container');
+    for (let container of mediaLabelContainer) {
+        container.style.display = 'grid';
+    }
     let mediaLabels = document.querySelectorAll('.media-label');
     for (let element of elements) {
         element.style.display = "inline";
@@ -302,8 +312,8 @@ function previewImage(e) {
         }
     }
     const container = e.target.closest('form');
-    const mediaImage = container.querySelector('.media-image')
-    const mediaVideo = container.querySelector('.media-video')
+    const mediaImage = container.querySelector('.media-image');
+    const mediaVideo = container.querySelector('.media-video');
     let file = e.target.files[0];
     if (file) {
         if (isVideo(file.name)) {
@@ -361,13 +371,14 @@ function imageClicked(e) {
     let fullscreenImageContainer = document.querySelector('#fullscreen-image-container');
     fullscreenImageContainer.style.display = "grid";
 
+    fullscreenImage.style.display = "inline";
     fullscreenImage.src = image.src;
 }
 
 function fullscreenImageMinimize(e) {
     let fullscreenImageContainer = document.querySelector('#fullscreen-image-container');
     fullscreenImageContainer.style.display = 'none';
-
+    fullscreenImage.style.display = "none";
 }
 
 function addMedia() {
@@ -537,6 +548,7 @@ function removeMedia() {
 
 
 async function saveAll() {
+    document.querySelector('#save-notification-container').style.display = 'grid';
     const clientForm = new FormData(document.querySelector('#client-form'));
     const pigmentsForm = new FormData(document.querySelector('#pigments-form'));
     const touchupsForm = new FormData(document.querySelector('#touchups-form'));
@@ -564,9 +576,11 @@ async function saveAll() {
     const touchups = touchupsForm.getAll("touchup");
     let data = Object.fromEntries(clientForm);
     data.comments = document.querySelector("#comments").textContent;
-    console.log(data);
+
+    //console.log(data);
+
     let clientID = 0;
-    await fetch(`https://localhost:7082/api/Client/`, {
+    await fetch(`${ip}/api/Client/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -580,25 +594,31 @@ async function saveAll() {
         if (!pigment) {
             continue;
         }
-        await fetch(`https://localhost:7082/api/ClientPigment/${clientID}`, {
+        let response = await fetch(`${ip}/api/ClientPigment/${clientID}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ pigment: pigment })
-        })
+        });
+        if (!response.ok) {
+            console.log(`An error has occured: ${response.status}`);
+        }
     }
     for (let touchup of touchups) {
         if (!touchup) {
             continue;
         }
-        await fetch(`https://localhost:7082/api/ClientTouchup/${clientID}`, {
+        let response = await fetch(`${ip}/api/ClientTouchup/${clientID}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ TouchupDate: touchup })
-        })
+        });
+        if (!response.ok) {
+            console.log(`An error has occured: ${response.status}`);
+        }
     }
     for (let mediaData of mediaForm) {
         if (mediaData.querySelector('[name="media"').files.length == 0) {
@@ -623,11 +643,15 @@ async function saveAll() {
             submitMediaForm.append("Avatar", singleMediaForm.get("avatar"));
         }
         submitMediaForm.append("media", singleMediaForm.get("media"));
-        await fetch(`https://localhost:7082/api/ClientMedia/${clientID}`, {
+        let response = await fetch(`${ip}/api/ClientMedia/${clientID}`, {
             method: 'POST',
             body: submitMediaForm
         })
+        if (!response.ok) {
+            console.log(`An error has occured: ${response.status}`);
+        }
     }
+    document.querySelector('#save-notification-container').style.display = 'none';
     alert('Client Saved.')
     let url = window.location.href;
     window.location.assign(`${url}?id=${clientID}&edit=false`);
@@ -672,28 +696,33 @@ async function updateAll() {
     let touchups = touchupsForm.getAll("touchup");
     let data = Object.fromEntries(clientForm);
     data.comments = document.querySelector("#comments").textContent;
-    console.log(data);
+    //console.log(data);
     //Check if client data is the same as original data from the database (client data is first 6 entries), and if the data is different update it
     if (JSON.stringify(Object.fromEntries(Object.entries(data).slice(0, 7)))
         == JSON.stringify(Object.fromEntries(Object.entries(origData).slice(0, 7)))) {
         //console.log("Same");
     }
     else {
-        await fetch(`https://localhost:7082/api/Client/${clientID}`, {
+        let response = await fetch(`${ip}/api/Client/${clientID}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
-        })
-            .then(response => response.json())
-            .then(json => JSON.stringify(json));
+        });
+            //.then(response => response.json())
+            //.then(json => JSON.stringify(json));
+        if (!response.ok) {
+            console.log(`An error has occured: ${response.status}`);
+        }
         //console.log("Different");
     }
 
+    document.querySelector('#save-notification-container').style.display = 'grid';
     await updateDbFromArray(pigments, clientID, "pigment");
     await updateDbFromArray(touchups, clientID, "touchup");
     await updateDbMedia(mediaForm, clientID);
+    document.querySelector('#save-notification-container').style.display = 'none';
     window.scrollTo(0, 0);
     
     let url = window.location.href;
@@ -705,7 +734,7 @@ async function updateDbFromArray(newValues, cid, type) {
     //Remove empty/null/etc. from array
     newValues = newValues.filter((x) => x);
 
-    //Clone original pigments to do operations on a new array, as original data is global and persists after the save button is pressed
+    //Clone original pigments to do operations on a new array
     let originalValues;
     if (type == "pigment") {
         originalValues = [...origData.pigments];
@@ -727,32 +756,38 @@ async function updateDbFromArray(newValues, cid, type) {
         //console.log("pigment");
         //Update database as many times as necessary
         for (let i = 0; i < updateCount; i++) {
-            await fetch(`https://localhost:7082/api/ClientPigment/${cid}/${originalValues[i]}`, {
+            let response = await fetch(`${ip}/api/ClientPigment/${cid}/${originalValues[i]}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ pigment: newValues[i] })
             });
+            if (!response.ok) {
+                console.log(`An error has occured: ${response.status}`);
+            }
         }
 
         //Remove updated pigments from both arrays if any were updated
         if (updateCount) {
-            newValues = newValues.splice(0, updateCount);
-            originalValues = originalValues.splice(0, updateCount);
+            newValues.splice(0, updateCount);
+            originalValues.splice(0, updateCount);
         }
 
         //Delete pigments from the database if the array of original pigments still has values
         if (originalValues.length) {
             //console.log("Deleting pigments");
             for (let singlePigment of originalValues) {
-                await fetch(`https://localhost:7082/api/ClientPigment/${cid}`, {
+                let response = await fetch(`${ip}/api/ClientPigment/${cid}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ pigment: singlePigment })
                 });
+                if (!response.ok) {
+                    console.log(`An error has occured: ${response.status}`);
+                }
             }
         }
         //Inserts pigments into the database if the array of new pigments still has values.
@@ -760,13 +795,16 @@ async function updateDbFromArray(newValues, cid, type) {
         if (newValues.length) {
             //console.log("Adding pigments");
             for (let singlePigment of newValues) {
-                await fetch(`https://localhost:7082/api/ClientPigment/${cid}`, {
+                let response = await fetch(`${ip}/api/ClientPigment/${cid}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ pigment: singlePigment })
                 });
+                if (!response.ok) {
+                    console.log(`An error has occured: ${response.status}`);
+                }
             }
         }
     }
@@ -774,32 +812,38 @@ async function updateDbFromArray(newValues, cid, type) {
         //console.log("touchup");
         //Update database as many times as necessary
         for (let i = 0; i < updateCount; i++) {
-            await fetch(`https://localhost:7082/api/ClientTouchup/${cid}/${originalValues[i]}`, {
+            let response = await fetch(`${ip}/api/ClientTouchup/${cid}/${originalValues[i]}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ TouchupDate: newValues[i] })
             });
+            if (!response.ok) {
+                console.log(`An error has occured: ${response.status}`);
+            }
         }
 
         //Remove updated touchups from both arrays if any were updated
         if (updateCount) {
-            newValues = newValues.splice(0, updateCount);
-            originalValues = originalValues.splice(0, updateCount);
+            newValues.splice(0, updateCount);
+            originalValues.splice(0, updateCount);
         }
 
         //Delete touchups from the database if the array of original touchups still has values
         if (originalValues.length) {
             //console.log("Deleting touchups");
             for (let singleTouchup of originalValues) {
-                await fetch(`https://localhost:7082/api/ClientTouchup/${cid}`, {
+                let response = await fetch(`${ip}/api/ClientTouchup/${cid}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ TouchupDate: singleTouchup })
                 });
+                if (!response.ok) {
+                    console.log(`An error has occured: ${response.status}`);
+                }
             }
         }
         //Inserts touchups into the database if the array of new touchups still has values.
@@ -807,13 +851,16 @@ async function updateDbFromArray(newValues, cid, type) {
         if (newValues.length) {
             //console.log("Adding touchups");
             for (let singleTouchup of newValues) {
-                await fetch(`https://localhost:7082/api/ClientTouchup/${cid}`, {
+                let response = await fetch(`${ip}/api/ClientTouchup/${cid}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ TouchupDate: singleTouchup })
                 });
+                if (!response.ok) {
+                    console.log(`An error has occured: ${response.status}`);
+                }
             }
         }
     }
@@ -859,7 +906,7 @@ async function updateDbMedia(mediaForm, cid) {
                     && origMedia[matchedIndex].mediaDate == singleMediaForm.get('media-date'))) {
                     //console.log("fetching media update");
 
-                    await fetch(`https://localhost:7082/api/ClientMedia/${cid}`, {
+                    let response = await fetch(`${ip}/api/ClientMedia/${cid}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -869,6 +916,9 @@ async function updateDbMedia(mediaForm, cid) {
                             Avatar: singleMediaForm.get('avatar') === "false" ? false : true, MediaDate: singleMediaForm.get('media-date')
                         })
                     });
+                    if (!response.ok) {
+                        console.log(`An error has occured: ${response.status}`);
+                    }
                 }
                 origMedia.splice(matchedIndex, 1);
             }
@@ -890,15 +940,21 @@ async function updateDbMedia(mediaForm, cid) {
                 submitMediaForm.append("Avatar", singleMediaForm.get("avatar"));
             }
             submitMediaForm.append("media", singleMediaForm.get("media"));
-            await fetch(`https://localhost:7082/api/ClientMedia/${cid}`, {
+            let response = await fetch(`${ip}/api/ClientMedia/${cid}`, {
                 method: 'POST',
                 body: submitMediaForm
             });
+            if (!response.ok) {
+                console.log(`An error has occured: ${response.status}`);
+            }
         }
     }
     for (let origData of origMedia) {
-        await fetch(`https://localhost:7082/api/ClientMedia/${cid}/${origData.mediaName}`, {
+        let response = await fetch(`${ip}/api/ClientMedia/${cid}/${origData.mediaName}`, {
             method: 'DELETE',
         })
+        if (!response.ok) {
+            console.log(`An error has occured: ${response.status}`);
+        }
     }
 }

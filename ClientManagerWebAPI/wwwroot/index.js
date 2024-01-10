@@ -10,6 +10,8 @@ document.querySelector('.sidebar-button').addEventListener('click', redirectToAd
 
 document.querySelector('#load-more').addEventListener('click', loadMore)
 
+const ip = window.location.origin;
+
 async function loadMore() {
     const results = document.querySelectorAll('.card');
     await loadDatabase(results.length)
@@ -45,6 +47,12 @@ async function displayClients(results) {
     //console.log(results);
     for (let i = 0; i < results.length; i++) {
         await addCardToResults(results[i]);
+    }
+    if (document.querySelectorAll('.card').length >= 10) {
+        document.querySelector('#load-more').style.display = 'inline';
+    }
+    else if (document.querySelectorAll('.card').length == 0) {
+        document.querySelector('#no-results').style.display = 'inline';
     }
 }
 
@@ -86,12 +94,6 @@ async function searchSubmitClicked() {
             .catch((err) => {
                 console.log(err);
             });
-        if (document.querySelectorAll('.card').length >= 10) {
-            document.querySelector('#load-more').style.display = 'inline';
-        }
-        else if (document.querySelectorAll('.card').length == 0) {
-            document.querySelector('#no-results').style.display = 'inline';
-        }
         return;
     }
 
@@ -130,11 +132,11 @@ async function addCardToResults(data) {
     let image = '';
     let imageUrl = '';
     if (data.mediaName) {
-        image = await getMediaFromDB(data.clientID, data.mediaName);
-        imageUrl = URL.createObjectURL(image);
+        //image = await getMediaFromDB(data.clientID, data.mediaName);
+        //imageUrl = URL.createObjectURL(image);
         //console.log(clone.querySelector('.image'));
         //console.log(imageUrl);
-        clone.querySelector('.image').src = imageUrl;
+        clone.querySelector('.image').src = `${ip}/api/ClientMedia/${data.clientID}/${data.mediaName}`;
     }
     clone.querySelector('.edit-button').addEventListener('click', function (e) {
         e.stopPropagation();
@@ -150,7 +152,7 @@ async function addCardToResults(data) {
         if (!confirm(`Are you sure you want to delete ${name}?`)) {
             return;
         }
-        await fetch(`https://localhost:7082/api/Client/${id}`, {
+        await fetch(`${ip}/api/Client/${id}`, {
             method: 'DELETE',
             body: console.log(JSON.stringify(data))
         });

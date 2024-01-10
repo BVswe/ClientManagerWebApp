@@ -10,11 +10,14 @@
         <link rel="stylesheet" href="client-page-styles.css">
     </head>
     <body>
-        <div id="fullscreen-image-container">
+        <div id="fullscreen-image-container" class="fullscreen-container">
             <img id="fullscreen-image" />
         </div>
+        <div id="save-notification-container" class="fullscreen-container">
+            <p id="save-notification">Saving...</p>
+        </div>
         <div id="page-header">
-            <a href ="https://localhost:7082/" id="back-button"><i id="back-arrow"></i>Client Manager</a>
+            <a id="back-button"><i id="back-arrow"></i>Client Manager</a>
         </div>
         <div class="info-container">
             <form id="client-form">
@@ -54,12 +57,12 @@
                 <h4>Pigments</h4>
                 <form id="pigments-form">
                     <!--
-                    <label class="input-label">
-                        Pigment:
-                        <input type="text" name="pigment" placeholder="Pigment" />
-                        <button class="specific-pigment-delete invisible-when-viewing">X</button>
-                    </label>
-                    -->
+                <label class="input-label">
+                    Pigment:
+                    <input type="text" name="pigment" placeholder="Pigment" />
+                    <button class="specific-pigment-delete invisible-when-viewing">X</button>
+                </label>
+                -->
                 </form>
                 <button class="invisible-when-viewing" id="pigment-add">+</button>
                 <button class="invisible-when-viewing" id="pigment-remove">-</button>
@@ -67,7 +70,7 @@
             <div id="touchups-form-container">
                 <h4>Touchups</h4>
                 <form id="touchups-form">
-                <!--
+                    <!--
                 <label class="input-label">
                     Touchup Date:
                     <input type="date" name="touchup" />
