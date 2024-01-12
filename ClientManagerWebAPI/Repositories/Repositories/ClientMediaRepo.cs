@@ -20,7 +20,7 @@ namespace ClientManagerWebAPI.Repositories.Repositories
         }
         public async Task<ClientMedia> DeleteClientMedia(ClientMedia media)
         {
-            var filePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            var filePath = AppContext.BaseDirectory;
             filePath = Path.Combine(filePath, media.ClientID.ToString());
             var ext = Path.GetExtension(media.MediaName).ToLowerInvariant();
             string processedFileName = Path.GetFileNameWithoutExtension(string.Join("", media.MediaName.Split(Path.GetInvalidFileNameChars())).Replace(" ", "_")).Replace(".", "") + ext;
@@ -130,7 +130,7 @@ namespace ClientManagerWebAPI.Repositories.Repositories
 
             //In a production environment, something like
             //file signature validation would also take place here
-            var programPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            var programPath = AppContext.BaseDirectory;
             var clientFolder = Path.Combine(programPath, id);
             string processedFileName = Path.GetFileNameWithoutExtension(string.Join("", section.FileName.Split(Path.GetInvalidFileNameChars())).Replace(" ", "_")).Replace(".", "") + ext;
             Directory.CreateDirectory(clientFolder);

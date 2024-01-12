@@ -548,7 +548,6 @@ function removeMedia() {
 
 
 async function saveAll() {
-    document.querySelector('#save-notification-container').style.display = 'grid';
     const clientForm = new FormData(document.querySelector('#client-form'));
     const pigmentsForm = new FormData(document.querySelector('#pigments-form'));
     const touchupsForm = new FormData(document.querySelector('#touchups-form'));
@@ -572,6 +571,7 @@ async function saveAll() {
             return;
         }
     }
+    document.querySelector('#save-notification-container').style.display = 'grid';
     const pigments = pigmentsForm.getAll("pigment");
     const touchups = touchupsForm.getAll("touchup");
     let data = Object.fromEntries(clientForm);

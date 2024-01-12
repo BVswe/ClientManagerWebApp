@@ -81,7 +81,7 @@ namespace ClientManagerWebAPI.Repositories.Repositories
         {
             string query = $"SELECT clients.client_id, first_name, last_name, phone, client_media.client_id, client_media.media_name FROM clients" +
                 $" LEFT JOIN client_media ON clients.client_id = client_media.client_id AND client_media.avatar = 'true'" +
-                $" LIMIT 10 OFFSET {currentOffset};";
+                $" ORDER BY first_name LIMIT 10 OFFSET {currentOffset};";
             using (var connection = new NpgsqlConnection(_connectionString))
             {
                 IEnumerable<Client> retrievedClients =  await connection.QueryAsync<Client, ClientMedia, Client>(query, (client, media) =>

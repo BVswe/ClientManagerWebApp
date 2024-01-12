@@ -13,6 +13,7 @@ using Microsoft.Extensions.ObjectPool;
 using static System.Collections.Specialized.BitVector32;
 using System;
 using static System.Net.Mime.MediaTypeNames;
+using System.Reflection;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -34,7 +35,7 @@ namespace ClientManagerWebAPI.Controllers
         {
             fileName = fileName.Replace("/", "");
             fileName = fileName.Replace(@"\", "");
-            var filePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            var filePath = AppContext.BaseDirectory;
             filePath = Path.Combine(filePath, id.ToString());
             var ext = Path.GetExtension(fileName).ToLowerInvariant();
             string processedFileName = Path.GetFileNameWithoutExtension(string.Join("", fileName.Split(Path.GetInvalidFileNameChars())).Replace(" ", "_")).Replace(".", "") + ext;
