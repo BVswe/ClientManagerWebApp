@@ -9,11 +9,11 @@ Default should use client_manager_db as the database instead.
 
 Publish using Visual Studio.
 
-Main screen
+## Main screen
 ![example-image-1](https://github.com/BVswe/ClientManagerWebApp/assets/125114910/b9c89f3d-1665-4736-97de-2ba7833bf678)
 
-Basic CLient Information
+## Basic Client Information
 ![example-image-3](https://github.com/BVswe/ClientManagerWebApp/assets/125114910/21475628-20f4-40ab-9385-607835987082)
 
-Uploaded Media - Videos are okay too! Additionaly, with more images the media becomes sideways scrollable.
+## Uploaded Media - Videos are okay too! Additionally, with more images the media becomes sideways scrollable.
 ![example-image-2](https://github.com/BVswe/ClientManagerWebApp/assets/125114910/18e524cd-f9ba-4f89-b239-ee6199123ea9)
